@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -19,6 +21,10 @@ const dropdownLinks = [
 ];
 
 export default function Navbar() {
+   
+  const router = useRouter()
+
+
   const [isOpen, setIsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
@@ -50,7 +56,8 @@ export default function Navbar() {
               alt="Brook Skincare Logo"
               width={130}
               height={45}
-              priority
+              style={{ height: "auto" }}
+              
             />
           </Link>
 
@@ -107,8 +114,10 @@ export default function Navbar() {
           {/* RIGHT — CTA + Hamburger */}
           <div className="flex items-center gap-4">
             <Button
+              onClick={() => router.push("/login")}
               className="hidden md:flex text-sm px-5 py-2 rounded-full font-medium"
               style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
+              
             >
               Book Appointment
             </Button>
@@ -236,7 +245,7 @@ export default function Navbar() {
             <Button
               className="w-full text-sm px-5 py-3 rounded-full font-medium"
               style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
-              onClick={closeMobileMenu}
+              onClick={() => { router.push("/login"); closeMobileMenu(); }}
             >
               Book Appointment
             </Button>
