@@ -56,8 +56,9 @@ export default function Navbar() {
               alt="Brook Skincare Logo"
               width={130}
               height={45}
-              style={{ height: "auto" }}
-              
+              loading="eager"
+              style={{ width: "130px", height: "auto" }}
+              priority 
             />
           </Link>
 

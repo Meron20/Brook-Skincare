@@ -7,6 +7,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Mail } from "lucide-react";
+import { Lock, Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+
 
 // ── ZOD SCHEMA ──
 const loginSchema = z.object({
@@ -17,8 +23,15 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+
+    const router = useRouter()
+
+
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [serverSuccess, setServerSuccess] = useState("");
 
   const {
     register,
@@ -29,12 +42,35 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+
+ const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    // We will connect this to NextAuth later
-    console.log("Form data:", data);
-    setTimeout(() => setIsLoading(false), 1500);
-  };
+    setServerError("");
+    setServerSuccess("");
+
+    try {
+        const result = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
+    
+        if (result?.error) {
+          setServerError("Invalid email or password. Please try again.");
+          return;
+        }
+    
+        setServerSuccess("Welcome back! Redirecting...");
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+    
+      } catch {
+        setServerError("Something went wrong. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
   const handleTabSwitch = (tab: "login" | "register") => {
     setActiveTab(tab);
@@ -131,20 +167,26 @@ export default function LoginPage() {
               <label className="text-sm text-[#1E1548]">
                 Email address
               </label>
-              <input
+
+             <div className="relative">
+                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+
+                <input
                     {...register("email")}
                     type="email"
                     placeholder="you@example.com"
-                    className="w-full px-0 py-3 text-sm text-black placeholder-gray-400 outline-none bg-transparent border-b transition-all"
+                    className="w-full pl-7 py-3 text-sm text-black placeholder-gray-400 outline-none bg-transparent border-b transition-all focus:border-[#C9A96E]"
                     style={{
                         borderBottom: errors.email
                         ? "2px solid #ef4444"
                         : "1px solid #1E1548",
                     }}
-                />
+                    />
+                </div>
+
                 {errors.email && (
                     <p className="text-xs text-red-600 mt-1">
-                    {errors.email.message}
+                      {errors.email.message}
                     </p>
                 )}
             </div>
@@ -153,25 +195,41 @@ export default function LoginPage() {
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
                 <label className="text-sm text-[#1E1548]">Password</label>
+
                 <Link
                   href="/forgot-password"
                   className="text-xs hover:underline"
-                  style={{ color: "#CFA86A" }}
+                  style={{ color: "#ab8a4b" }}
                 >
                   Forgot password?
                 </Link>
               </div>
-              <input
-                {...register("password")}
-                type="password"
-                placeholder="Enter your password"
-                className="w-full px-0 py-3 text-sm text-black placeholder-gray-400 outline-none bg-transparent border-b transition-all"
-                style={{
-                    borderBottom: errors.email
-                    ? "2px solid #ef4444"
-                    : "1px solid #1E1548",
-                }}
-              />
+
+              <div className="relative">
+                   
+                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+
+                <input
+                    {...register("password")}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="w-full pl-7 pr-8 py-3 text-sm text-black placeholder-gray-400 outline-none bg-transparent border-b transition-all focus:border-[#C9A96E]"
+                    style={{
+                        borderBottom: errors.password
+                        ? "2px solid #ef4444"
+                        : "1px solid #1E1548",
+                    }}
+                />
+
+                  
+                <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400"
+                    >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+            </div>
               {errors.password && (
                 <p className="text-xs text-red-600 mt-1">
                   {errors.password.message}
@@ -219,10 +277,30 @@ export default function LoginPage() {
                 Sign in with Google
               </button>
             </div>
-            <div>
+        <div>
 
             {/* Login button */}
-                <Button
+
+          
+            {serverError && (
+                <div
+                    className="w-full px-4 py-3 rounded-xl text-md text-red-600 mb-4"
+                    style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}
+                >
+                    {serverError}
+                </div>
+            )}
+
+            {serverSuccess && (
+                <div
+                    className="w-full px-4 py-3 rounded-xl text-sm text-green-300"
+                    style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}
+                >
+                    {serverSuccess}
+                </div>
+            )}
+
+            <Button
                 type="submit"
                 disabled={isLoading}
                 className="w-full py-3 rounded-xl text-sm font-semibold mt-1 transition-all hover:opacity-90"
@@ -230,7 +308,7 @@ export default function LoginPage() {
             
                 >
                 {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
+            </Button>
             </div>
 
           </form>
@@ -242,6 +320,7 @@ export default function LoginPage() {
             src="/login.png"
             alt="Brook Skincare"
             fill
+            sizes="50vw"
             className="object-cover object-center"
             priority
           />
