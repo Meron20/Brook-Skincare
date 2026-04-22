@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── CHECK PASSWORD ──
+  
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── SUCCESS ──
     return NextResponse.json(
       {
         message: "Login successful",
