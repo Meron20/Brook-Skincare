@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 
 
 const navLinks = [
@@ -23,6 +24,7 @@ const dropdownLinks = [
 export default function Navbar() {
    
   const router = useRouter()
+  const { data: session } = useSession();
 
 
   const [isOpen, setIsOpen] = useState(false);
@@ -114,14 +116,24 @@ export default function Navbar() {
 
           {/* RIGHT — CTA + Hamburger */}
           <div className="flex items-center gap-4">
-            <Button
-              onClick={() => router.push("/login")}
-              className="hidden md:flex text-sm px-5 py-2 rounded-full font-medium"
-              style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
-              
-            >
-              Book Appointment
-            </Button>
+          {session ? (
+              <Button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="hidden md:flex text-sm px-5 py-2 rounded-full font-medium"
+                style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
+              >
+                Sign Out
+              </Button>
+            ) : (
+              <Link href="/login">
+                <Button
+                  className="hidden md:flex text-sm px-5 py-2 rounded-full font-medium"
+                  style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
+                >
+                  Book Appointment
+                </Button>
+              </Link>
+            )}
 
             <button
               className="md:hidden text-gray-200 hover:text-[#C9A96E] transition-colors z-50 relative"
@@ -243,13 +255,24 @@ export default function Navbar() {
               ${mobileOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}
             style={{ transitionDelay: mobileOpen ? `${(navLinks.length + 1) * 80}ms` : "0ms" }}
           >
-            <Button
-              className="w-full text-sm px-5 py-3 rounded-full font-medium"
-              style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
-              onClick={() => { router.push("/login"); closeMobileMenu(); }}
-            >
-              Book Appointment
-            </Button>
+           {session ? (
+              <Button
+                className="w-full text-sm px-5 py-3 rounded-full font-medium"
+                style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
+                onClick={() => { signOut({ callbackUrl: "/" }); closeMobileMenu(); }}
+              >
+                Sign Out
+              </Button>
+            ) : (
+              <Link href="/login" onClick={closeMobileMenu} className="block w-full">
+                <Button
+                  className="w-full text-sm px-5 py-3 rounded-full font-medium"
+                  style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
+                >
+                  Book Appointment
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

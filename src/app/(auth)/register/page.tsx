@@ -7,14 +7,14 @@ import { Mail, User, Lock, EyeOff, Eye } from "lucide-react";
 
 type FormData = {
   email: string;
-  username: string;
+  fullName: string;
   password: string;
   confirmPassword: string;
 };
 
 type FormErrors = {
   email?: string;
-  username?: string;
+  fullName?: string;
   password?: string;
   confirmPassword?: string;
   general?: string;
@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
   const [formData, setFormData] = useState<FormData>({
     email: "",
-    username: "",
+    fullName: "",
     password: "",
     confirmPassword: "",
   });
@@ -62,10 +62,10 @@ export default function RegisterPage() {
       newErrors.email = "Ange en giltig e-postadress (ex: namn@mail.com)";
     }
 
-    if (!formData.username.trim()) {
-      newErrors.username = "Användarnamn är obligatoriskt.";
-    } else if (formData.username.trim().length < 2) {
-      newErrors.username = "Användarnamnet måste vara minst 2 tecken.";
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Användarnamn är obligatoriskt.";
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = "Användarnamnet måste vara minst 2 tecken.";
     }
 
     if (!formData.password) {
@@ -97,14 +97,14 @@ export default function RegisterPage() {
     try {
       setIsLoading(true);
 
-      const res = await fetch("/api/register", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: formData.email,
-          username: formData.username,
+          username: formData.fullName,
           password: formData.password,
         }),
       });
@@ -122,7 +122,7 @@ export default function RegisterPage() {
 
       setFormData({
         email: "",
-        username: "",
+        fullName: "",
         password: "",
         confirmPassword: "",
       });
@@ -221,7 +221,7 @@ export default function RegisterPage() {
                 </label>
                 <div
                   className={`flex items-center border-b pb-2 ${
-                    errors.username ? "border-red-500" : "border-black"
+                    errors.fullName ? "border-red-500" : "border-black"
                   }`}
                 >
                   <User className="w-4 h-4 text-gray-500 mr-2" />
@@ -229,13 +229,13 @@ export default function RegisterPage() {
                     name="username"
                     type="text"
                     placeholder="Enter your user name"
-                    value={formData.username}
+                    value={formData.fullName}
                     onChange={handleChange}
                     className="w-full bg-transparent outline-none text-sm"
                   />
                 </div>
-                {errors.username && (
-                  <p className="text-red-500 text-sm mt-2">{errors.username}</p>
+                {errors.fullName && (
+                  <p className="text-red-500 text-sm mt-2">{errors.fullName}</p>
                 )}
               </div>
 

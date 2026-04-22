@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/mongodb";
-import User from "@/lib/models/User";
+import User from "@/models/User";
 
 export async function POST(req: Request) {
   try {
-    const { email, username, password } = await req.json();
+    const { email, fullName, password } = await req.json();
 
-    if (!email || !username || !password) {
+    if (!email || !fullName || !password) {
       return NextResponse.json(
         { message: "All fields are required." },
         { status: 400 }
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (username.trim().length < 2) {
+    if (fullName.trim().length < 2) {
       return NextResponse.json(
         { message: "Username must be at least 2 characters." },
         { status: 400 }
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
     const newUser = await User.create({
       email: email.toLowerCase(),
-      username: username.trim(),
+      fullName: fullName.trim(),
       password: hashedPassword,
     });
 
