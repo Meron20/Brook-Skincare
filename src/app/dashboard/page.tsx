@@ -1,10 +1,32 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Users, Calendar, FileText, TrendingUp } from "lucide-react";
 
 export default function DashboardPage() {
+  const [customerCount, setCustomerCount] = useState(0);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/customers");
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setCustomerCount(data.length);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const cards = [
     {
       title: "Customers",
-      value: "0",
+      value: customerCount.toString(),
       description: "Registered customers",
       icon: Users,
     },
