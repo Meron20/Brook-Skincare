@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import User from "@/models/User";
+import User from "@/lib/models/User";
+import JournalNote from "@/lib/models/JournalNote";
 
 export async function GET(
   req: Request,
@@ -11,7 +12,9 @@ export async function GET(
 
     const { id } = await context.params;
 
-    const customer = await User.findById(id);
+    const customer = await User.findById(id).select(
+      "_id fullName email phone skinConcern createdAt"
+    );
 
     if (!customer) {
       return NextResponse.json(
@@ -20,7 +23,14 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(customer);
+    const notes = await JournalNote.find({ customerId: id }).sort({
+      createdAt: -1,
+    });
+
+    return NextResponse.json({
+      customer,
+      notes,
+    });
   } catch (error) {
     console.error(error);
 

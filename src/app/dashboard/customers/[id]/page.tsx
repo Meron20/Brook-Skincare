@@ -23,10 +23,10 @@ type Customer = {
 };
 
 type JournalNote = {
-  id: string;
+  _id: string;
   title: string;
   content: string;
-  date: string;
+  createdAt: string;
 };
 
 export default function CustomerCardPage() {
@@ -58,7 +58,8 @@ export default function CustomerCardPage() {
         const data = await res.json();
 
         if (res.ok) {
-          setCustomer(data);
+          setCustomer(data.customer);
+          setNotes(data.notes || []);
         }
       } catch (error) {
         console.error(error);
@@ -70,20 +71,29 @@ export default function CustomerCardPage() {
     fetchCustomer();
   }, [customerId]);
 
-  const handleAddNote = () => {
-    if (!noteTitle.trim() || !noteContent.trim()) return;
+  const handleAddNote = async () => {
+  if (!noteTitle.trim() || !noteContent.trim()) return;
 
-    const newNote = {
-      id: crypto.randomUUID(),
+  const res = await fetch("/api/journal-notes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      customerId,
       title: noteTitle,
       content: noteContent,
-      date: new Date().toLocaleDateString(),
-    };
+    }),
+  });
 
-    setNotes((prev) => [newNote, ...prev]);
-    setNoteTitle("");
-    setNoteContent("");
-  };
+  const newNote = await res.json();
+
+  if (!res.ok) return;
+
+  setNotes((prev) => [newNote, ...prev]);
+  setNoteTitle("");
+  setNoteContent("");
+};
 
   if (loading) {
     return (
@@ -230,12 +240,12 @@ export default function CustomerCardPage() {
               {notes.length > 0 ? (
                 notes.map((note) => (
                   <div
-                    key={note.id}
+                    key={note._id}
                     className="border border-gray-100 rounded-2xl p-5"
                   >
                     <div className="flex justify-between gap-4">
                       <h3 className="font-semibold text-black">{note.title}</h3>
-                      <p className="text-sm text-gray-500">{note.date}</p>
+                      <p className="text-sm text-gray-500">{new Date(note.createdAt).toLocaleDateString()}</p>
                     </div>
                     <p className="text-sm text-gray-700 mt-3 leading-6">
                       {note.content}
@@ -265,7 +275,7 @@ export default function CustomerCardPage() {
 
               {notes.map((note) => (
                 <HistoryItem
-                  key={note.id}
+                  key={note._id}
                   icon={<FileText className="w-4 h-4" />}
                   title="Journal note added"
                   text={note.title}
