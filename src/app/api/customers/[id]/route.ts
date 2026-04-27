@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/lib/models/User";
 import JournalNote from "@/lib/models/JournalNote";
+import Booking from "@/lib/models/Booking";
+import ActivityLog from "@/lib/models/ActivityLog";
 
 export async function GET(
   req: Request,
@@ -27,15 +29,28 @@ export async function GET(
       createdAt: -1,
     });
 
-    return NextResponse.json({
-      customer,
-      notes,
+    const bookings = await Booking.find({ customerId: id }).sort({
+      createdAt: -1,
     });
-  } catch (error) {
-    console.error(error);
+
+    const activityLogs = await ActivityLog.find({ customerId: id }).sort({
+    createdAt: -1,
+  });
 
     return NextResponse.json(
-      { message: "Server error" },
+      {
+        customer,
+        notes,
+        bookings,
+        activityLogs,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Get customer details error:", error);
+
+    return NextResponse.json(
+      { message: "Failed to fetch customer details." },
       { status: 500 }
     );
   }
