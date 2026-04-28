@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared/Navbar";
 import SessionProvider from "@/components/shared/SessionProvider";
 
 const geist = Geist({
@@ -16,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Brook Skincare | Hyperpigmentation & Skin Health",
-  description: "Book a professional skin consultation with Brook Skincare. Expert care for hyperpigmentation and skin health — available online worldwide.",
+  description:
+    "Book a professional skin consultation with Brook Skincare. Expert care for hyperpigmentation and skin health — available online worldwide.",
 };
 
 export default function RootLayout({
@@ -27,9 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.variable} ${geistMono.variable} antialiased`}>
-         <SessionProvider>
-            <main>{children}</main>
-          </SessionProvider>
+        <SessionProvider>
+          <main>{children}</main>
+        </SessionProvider>
       </body>
     </html>
   );

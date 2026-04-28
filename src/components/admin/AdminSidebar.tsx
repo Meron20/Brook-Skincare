@@ -10,6 +10,7 @@ import {
   Sparkles,
   Clock,
   CalendarCheck,
+  Users,
   BookOpen,
   History,
   Settings,
@@ -21,6 +22,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
   { icon: Sparkles, label: "Services", href: "/admin/services" },
   { icon: Clock, label: "Time Slots", href: "/admin/timeslots" },
+  { icon: Users, label: "Customers", href: "/admin/customers"},
   { icon: CalendarCheck, label: "Bookings", href: "/admin/bookings" },
   { icon: BookOpen, label: "Journal", href: "/admin/journal" },
   { icon: History, label: "History", href: "/admin/history" },
@@ -200,7 +202,6 @@ type AdminSidebarProps = {
           style={{ background: "linear-gradient(180deg, transparent, #C9A96E, transparent)" }}
         />
 
-        {/* X close button */}
         <button
           className="absolute top-4 right-4 p-2 rounded-xl transition-colors"
           style={{ backgroundColor: "rgba(201,169,110,0.1)" }}
