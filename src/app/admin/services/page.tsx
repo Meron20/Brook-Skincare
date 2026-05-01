@@ -45,7 +45,7 @@ export default function ServicesPage() {
 
   const fetchServices = async () => {
     try {
-      const res = await fetch("/api/services");
+      const res = await fetch("/api/admin/services");
       const data = await res.json();
       setServices(data.services || []);
     } catch {
@@ -90,7 +90,7 @@ export default function ServicesPage() {
     setIsSaving(true);
     setError("");
     try {
-      const url = editingService ? `/api/services/${editingService._id}` : "/api/services";
+      const url = editingService ? `/api/admin/services/${editingService._id}` : "/api/services";
       const method = editingService ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -123,7 +123,7 @@ export default function ServicesPage() {
 
   const handleToggleActive = async (service: Service) => {
     try {
-      await fetch(`/api/services/${service._id}`, {
+      await fetch(`/api/admin/services/${service._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...service, isActive: !service.isActive }),
@@ -137,7 +137,6 @@ export default function ServicesPage() {
   return (
     <div className="space-y-6">
 
-      {/* ── HEADER ROW ── */}
       <div className="flex items-center justify-between">
         <p className="text-gray-400 text-sm">
           {services.length} service{services.length !== 1 ? "s" : ""} total
@@ -152,14 +151,14 @@ export default function ServicesPage() {
         </Button>
       </div>
 
-      {/* ── LOADING ── */}
+
       {isLoading && (
         <div className="flex items-center justify-center py-20">
           <Loader2 size={32} className="animate-spin" style={{ color: "#C9A96E" }} />
         </div>
       )}
 
-      {/* ── EMPTY STATE ── */}
+    
       {!isLoading && services.length === 0 && (
         <div
           className="flex flex-col items-center justify-center py-20 gap-4 rounded-2xl"

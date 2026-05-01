@@ -128,7 +128,7 @@ export default function Navbar() {
               <Link href="/login">
                 <Button
                   className="hidden md:flex text-sm px-5 py-2 rounded-full font-medium"
-                  style={{ backgroundColor: "#C9A96E", color: "#1E1548" }}
+                  variant="gold"
                 >
                   Book Appointment
                 </Button>

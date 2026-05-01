@@ -65,7 +65,7 @@ export default function TimeSlotsPage() {
 
   const fetchSlots = async () => {
     try {
-      const res = await fetch("/api/timeslots");
+      const res = await fetch("/api/admin/timeslots");
       const data = await res.json();
       setSlots(data.slots || []);
     } catch {
@@ -122,7 +122,7 @@ export default function TimeSlotsPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/timeslots", {
+      const res = await fetch("/api/admin/timeslots", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date: selectedDate, slots: allSlots }),
@@ -145,7 +145,7 @@ export default function TimeSlotsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`/api/timeslots/${id}`, { method: "DELETE" });
+      await fetch(`/api/admin/timeslots/${id}`, { method: "DELETE" });
       await fetchSlots();
       setDeleteConfirm(null);
     } catch {

@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
 import {
   LayoutDashboard,
   Sparkles,
@@ -16,6 +15,7 @@ import {
   Settings,
   LogOut,
   X,
+  ExternalLink
 } from "lucide-react";
 
 const navItems = [
@@ -121,11 +121,38 @@ type AdminSidebarProps = {
         })}
       </nav>
 
-      {/* ── DIVIDER ── */}
-      <div
-        className="mx-4 my-4"
-        style={{ height: "1px", backgroundColor: "rgba(201,169,110,0.15)" }}
-      />
+     
+            <div
+            className="mx-4 my-4"
+            style={{ height: "1px", backgroundColor: "rgba(201,169,110,0.15)" }}
+            />
+
+            <div className="px-3 mb-2">
+              <a
+            
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group/site overflow-hidden relative"
+               >
+                <div
+                className="absolute inset-0 opacity-0 group-hover/site:opacity-100 transition-opacity duration-200 rounded-xl"
+                style={{ backgroundColor: "rgba(201,169,110,0.08)" }}
+                />
+                <div className="relative flex-shrink-0">
+                <ExternalLink size={20} style={{ color: "#C9A96E" }} />
+                </div>
+                <span
+                className={`relative whitespace-nowrap text-sm font-medium transition-all duration-300 ${
+                    isMobile ? "block" : "overflow-hidden opacity-0 group-hover:opacity-100"
+                }`}
+                style={{ color: "#C9A96E", transitionDelay: "60ms" }}
+                >
+                View Site
+                </span>
+            </a>
+        </div>
+
 
       {/* ── LOGOUT ── */}
       <div className="px-3">
