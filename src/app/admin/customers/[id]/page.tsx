@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   Mail,
@@ -13,6 +13,12 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { bg, text, border, palette, gradient } from "@/lib/theme";
+import {
+  PageError,
+  EmptyState,
+  TableSkeleton,
+} from "@/components/admin/StateComponents";
 
 type Customer = {
   _id: string;
@@ -69,41 +75,33 @@ export default function CustomerCardPage() {
   const [newDate, setNewDate] = useState("");
   const [newTime, setNewTime] = useState("");
 
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        setLoading(true);
-        setError("");
+  const fetchCustomer = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-        const res = await fetch(`/api/customers/${customerId}`);
-        const data = await res.json();
+      const res = await fetch(`/api/customers/${customerId}`);
+      const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.message || "Failed to fetch customer.");
-        }
-
-        setCustomer(data.customer);
-        setNotes(data.notes || []);
-        setBookings(data.bookings || []);
-        setActivityLogs(data.activityLogs || []);
-      } catch {
-        setError("Could not load customer data.");
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        setError(data.message || "Failed to fetch customer.");
+        return;
       }
-    };
 
-    if (customerId) fetchCustomer();
+      setCustomer(data.customer);
+      setNotes(data.notes || []);
+      setBookings(data.bookings || []);
+      setActivityLogs(data.activityLogs || []);
+    } catch {
+      setError("Could not load customer data.");
+    } finally {
+      setLoading(false);
+    }
   }, [customerId]);
 
-  const inputStyle = {
-    border: "1px solid rgba(30,21,72,0.15)",
-    backgroundColor: "#fafafa",
-  };
-
-  const cardStyle = {
-    border: "1px solid rgba(30,21,72,0.1)",
-  };
+  useEffect(() => {
+    if (customerId) fetchCustomer();
+  }, [customerId, fetchCustomer]);
 
   const handleAddNote = async () => {
     if (!noteTitle.trim() || !noteContent.trim()) {
@@ -124,11 +122,11 @@ export default function CustomerCardPage() {
       const newNote = await res.json();
 
       if (!res.ok) {
-        throw new Error(newNote.message || "Failed to create journal note.");
+        setError(newNote.message || "Failed to create journal note.");
+        return;
       }
 
       setNotes((prev) => [newNote, ...prev]);
-
       setActivityLogs((prev) => [
         {
           _id: crypto.randomUUID(),
@@ -162,17 +160,22 @@ export default function CustomerCardPage() {
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId, treatment: newTreatment, date: newDate, time: newTime }),
+        body: JSON.stringify({
+          customerId,
+          treatment: newTreatment,
+          date: newDate,
+          time: newTime,
+        }),
       });
 
       const newBooking = await res.json();
 
       if (!res.ok) {
-        throw new Error(newBooking.message || "Failed to create booking.");
+        setError(newBooking.message || "Failed to create booking.");
+        return;
       }
 
       setBookings((prev) => [newBooking, ...prev]);
-
       setActivityLogs((prev) => [
         {
           _id: crypto.randomUUID(),
@@ -195,52 +198,41 @@ export default function CustomerCardPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={32} className="animate-spin" style={{ color: "#C9A96E" }} />
-      </div>
-    );
+    return <TableSkeleton rows={6} />;
   }
 
   if (!customer) {
     return (
-      <div
-        className="px-4 py-3 rounded-xl text-sm text-red-600"
-        style={{
-          backgroundColor: "rgba(239,68,68,0.08)",
-          border: "1px solid rgba(239,68,68,0.2)",
-        }}
-      >
-        {error || "Customer not found."}
-      </div>
+      <PageError
+        message={error || "Customer not found."}
+        onRetry={fetchCustomer}
+      />
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* HEADER */}
       <section
-        className="rounded-2xl overflow-hidden bg-white"
-        style={cardStyle}
+        className="rounded-2xl overflow-hidden"
+        style={{
+          backgroundColor: bg.card,
+          border: `1px solid ${border.subtle}`,
+        }}
       >
         <div
           className="px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
-          style={{
-            background: "linear-gradient(135deg, #1E1548, #2a1f5e)",
-          }}
+          style={{ background: gradient.sidebar }}
         >
           <div className="flex items-center gap-4">
             <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold"
-              style={{
-                background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-              }}
+              className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold"
+              style={{ background: gradient.gold, color: bg.page }}
             >
               {(customer.fullName || customer.email).charAt(0).toUpperCase()}
             </div>
 
             <div>
-              <p className="text-sm" style={{ color: "#C9A96E" }}>
+              <p className="text-sm" style={{ color: palette.gold }}>
                 Customer Card
               </p>
               <h1 className="text-2xl md:text-3xl font-bold text-white mt-1">
@@ -252,17 +244,7 @@ export default function CustomerCardPage() {
         </div>
       </section>
 
-      {error && (
-        <div
-          className="px-4 py-3 rounded-xl text-sm text-red-600"
-          style={{
-            backgroundColor: "rgba(239,68,68,0.08)",
-            border: "1px solid rgba(239,68,68,0.2)",
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {error && <PageError message={error} />}
 
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-1 space-y-6">
@@ -275,47 +257,49 @@ export default function CustomerCardPage() {
               <InfoRow
                 icon={<Calendar className="w-4 h-4" />}
                 label="Created at"
-                value={customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : "Unknown"}
+                value={
+                  customer.createdAt
+                    ? new Date(customer.createdAt).toLocaleDateString()
+                    : "Unknown"
+                }
               />
             </div>
           </Panel>
 
           <Panel title="Create Booking">
             <div className="flex flex-col gap-3">
-              <input
+              <InputField
                 value={newTreatment}
-                onChange={(e) => setNewTreatment(e.target.value)}
+                onChange={setNewTreatment}
                 placeholder="Treatment"
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                style={inputStyle}
               />
 
-              <input
+              <InputField
                 type="date"
                 value={newDate}
-                onChange={(e) => setNewDate(e.target.value)}
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                style={inputStyle}
+                onChange={setNewDate}
               />
 
-              <input
+              <InputField
                 type="time"
                 value={newTime}
-                onChange={(e) => setNewTime(e.target.value)}
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                style={inputStyle}
+                onChange={setNewTime}
               />
 
               <Button
                 onClick={handleCreateBooking}
                 disabled={isSavingBooking}
                 className="rounded-xl w-full py-3 text-sm font-semibold"
-                style={{
-                  background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-                  color: "white",
-                }}
+                style={{ background: gradient.gold, color: bg.page }}
               >
-                {isSavingBooking ? "Saving..." : "Create Booking"}
+                {isSavingBooking ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 size={16} className="animate-spin" />
+                    Saving...
+                  </span>
+                ) : (
+                  "Create Booking"
+                )}
               </Button>
             </div>
           </Panel>
@@ -324,62 +308,57 @@ export default function CustomerCardPage() {
             <div className="space-y-3">
               {bookings.length > 0 ? (
                 bookings.map((booking, i) => (
-                  <div
-                    key={booking._id}
-                    className="rounded-2xl p-4"
-                    style={{
-                      border: "1px solid rgba(30,21,72,0.08)",
-                      backgroundColor: i % 2 === 0 ? "white" : "rgba(248,247,255,0.8)",
-                    }}
-                  >
-                    <p className="font-semibold text-[#1E1548]">{booking.treatment}</p>
-                    <p className="text-sm text-gray-400 mt-2">
+                  <CardItem key={booking._id} index={i}>
+                    <p className="font-semibold" style={{ color: text.primary }}>
+                      {booking.treatment}
+                    </p>
+                    <p className="text-sm mt-2" style={{ color: text.muted }}>
                       {booking.date} at {booking.time}
                     </p>
                     <span
                       className="inline-block mt-3 text-xs px-3 py-1 rounded-full"
                       style={{
-                        backgroundColor: "rgba(201,169,110,0.12)",
-                        color: "#1E1548",
+                        backgroundColor:
+                          booking.status === "Completed"
+                            ? "rgba(52,211,153,0.14)"
+                            : `${palette.gold}1f`,
+                        color:
+                          booking.status === "Completed" ? "#059669" : text.primary,
                       }}
                     >
-                      {booking.status}
+                      {booking.status || "Upcoming"}
                     </span>
-                  </div>
+                  </CardItem>
                 ))
               ) : (
-                <EmptyText text="No bookings yet." />
+                <EmptyState
+                  icon={<Calendar size={22} style={{ color: palette.gold }} />}
+                  title="No bookings yet"
+                  description="Bookings for this customer will appear here"
+                />
               )}
             </div>
           </Panel>
 
           <Panel title="Add Journal Note">
             <div className="flex flex-col gap-4">
-              <input
+              <InputField
                 value={noteTitle}
-                onChange={(e) => setNoteTitle(e.target.value)}
+                onChange={setNoteTitle}
                 placeholder="Note title"
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                style={inputStyle}
               />
 
-              <textarea
+              <TextAreaField
                 value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
+                onChange={setNoteContent}
                 placeholder="Write journal note..."
-                rows={5}
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
-                style={inputStyle}
               />
 
               <Button
                 onClick={handleAddNote}
                 disabled={isSavingNote}
                 className="rounded-xl w-full py-3 text-sm font-semibold"
-                style={{
-                  background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-                  color: "white",
-                }}
+                style={{ background: gradient.gold, color: bg.page }}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 {isSavingNote ? "Saving..." : "Save Note"}
@@ -393,34 +372,33 @@ export default function CustomerCardPage() {
             <div className="space-y-4">
               {notes.length > 0 ? (
                 notes.map((note, i) => (
-                  <div
-                    key={note._id}
-                    className="rounded-2xl p-5"
-                    style={{
-                      border: "1px solid rgba(30,21,72,0.08)",
-                      backgroundColor: i % 2 === 0 ? "white" : "rgba(248,247,255,0.8)",
-                    }}
-                  >
+                  <CardItem key={note._id} index={i}>
                     <div className="flex justify-between gap-4">
-                      <h3 className="font-semibold text-[#1E1548]">{note.title}</h3>
-                      <p className="text-xs text-gray-400">
+                      <h3 className="font-semibold" style={{ color: text.primary }}>
+                        {note.title}
+                      </h3>
+                      <p className="text-xs" style={{ color: text.muted }}>
                         {new Date(note.createdAt).toLocaleDateString()}
                       </p>
                     </div>
 
-                    <p className="text-sm text-gray-600 mt-3 leading-6">
+                    <p className="text-sm mt-3 leading-6" style={{ color: text.secondary }}>
                       {note.content}
                     </p>
 
                     {note.createdBy && (
-                      <p className="text-xs text-gray-400 mt-3">
+                      <p className="text-xs mt-3" style={{ color: text.muted }}>
                         Created by: {note.createdBy}
                       </p>
                     )}
-                  </div>
+                  </CardItem>
                 ))
               ) : (
-                <EmptyText text="No journal notes yet." />
+                <EmptyState
+                  icon={<FileText size={22} style={{ color: palette.gold }} />}
+                  title="No journal notes yet"
+                  description="Journal notes for this customer will appear here"
+                />
               )}
             </div>
           </Panel>
@@ -431,24 +409,24 @@ export default function CustomerCardPage() {
                 activityLogs.map((item) => (
                   <div key={item._id} className="flex gap-4">
                     <div
-                      className="w-10 h-10 rounded-xl text-white flex-shrink-0 flex items-center justify-center"
-                      style={{
-                        background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-                      }}
+                      className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center"
+                      style={{ background: gradient.gold, color: bg.page }}
                     >
                       <Clock className="w-4 h-4" />
                     </div>
 
                     <div>
-                      <p className="font-semibold text-[#1E1548]">{item.type}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="font-semibold" style={{ color: text.primary }}>
+                        {item.type}
+                      </p>
+                      <p className="text-xs" style={{ color: text.muted }}>
                         {new Date(item.createdAt).toLocaleDateString()}
                       </p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm mt-1" style={{ color: text.secondary }}>
                         {item.description}
                       </p>
                       {item.createdBy && (
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs mt-1" style={{ color: text.muted }}>
                           Created by: {item.createdBy}
                         </p>
                       )}
@@ -456,7 +434,11 @@ export default function CustomerCardPage() {
                   </div>
                 ))
               ) : (
-                <EmptyText text="No history yet." />
+                <EmptyState
+                  icon={<Clock size={22} style={{ color: palette.gold }} />}
+                  title="No history yet"
+                  description="Activity history will appear here"
+                />
               )}
             </div>
           </Panel>
@@ -466,28 +448,18 @@ export default function CustomerCardPage() {
   );
 }
 
-function Panel({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div
-      className="rounded-2xl overflow-hidden bg-white"
-      style={{ border: "1px solid rgba(30,21,72,0.1)" }}
+      className="rounded-2xl overflow-hidden"
+      style={{ backgroundColor: bg.card, border: `1px solid ${border.subtle}` }}
     >
       <div
         className="px-6 py-4 text-sm font-semibold uppercase tracking-wider"
-        style={{
-          background: "linear-gradient(135deg, #1E1548, #2a1f5e)",
-          color: "#C9A96E",
-        }}
+        style={{ background: gradient.sidebar, color: palette.gold }}
       >
         {title}
       </div>
-
       <div className="p-6">{children}</div>
     </div>
   );
@@ -507,21 +479,93 @@ function InfoRow({
       <div
         className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center"
         style={{
-          backgroundColor: "rgba(201,169,110,0.12)",
-          color: "#C9A96E",
+          backgroundColor: `${palette.gold}1f`,
+          color: palette.gold,
         }}
       >
         {icon}
       </div>
 
       <div>
-        <p className="text-gray-400 text-xs">{label}</p>
-        <p className="text-[#1E1548] font-medium break-all">{value}</p>
+        <p className="text-xs" style={{ color: text.muted }}>
+          {label}
+        </p>
+        <p className="font-medium break-all" style={{ color: text.primary }}>
+          {value}
+        </p>
       </div>
     </div>
   );
 }
 
-function EmptyText({ text }: { text: string }) {
-  return <p className="text-sm text-gray-400">{text}</p>;
+function CardItem({
+  children,
+  index,
+}: {
+  children: React.ReactNode;
+  index: number;
+}) {
+  return (
+    <div
+      className="rounded-2xl p-4"
+      style={{
+        border: `1px solid ${border.subtle}`,
+        backgroundColor: index % 2 === 0 ? bg.card : bg.hover,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function InputField({
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+      style={{
+        border: `1px solid ${border.subtle}`,
+        backgroundColor: bg.card,
+        color: text.primary,
+      }}
+    />
+  );
+}
+
+function TextAreaField({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={5}
+      className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
+      style={{
+        border: `1px solid ${border.subtle}`,
+        backgroundColor: bg.card,
+        color: text.primary,
+      }}
+    />
+  );
 }

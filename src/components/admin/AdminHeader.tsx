@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { toast } from "sonner";
 import Link from "next/link";
+import { bg, text, border, palette, gradient, shadow } from "@/lib/theme";
 
 type AdminHeaderProps = {
   onMenuClick: () => void;
@@ -33,12 +34,14 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const [notifications, setNotifications] = useState<NotificationBooking[]>([]);
   const [readIds, setReadIds] = useState<string[]>([]);
 
-  const unreadCount = notifications.filter((n) => !readIds.includes(n._id)).length;
+  const unreadCount = notifications.filter(
+    (item) => !readIds.includes(item._id)
+  ).length;
 
   useEffect(() => {
     setAnimated(false);
-    const t = setTimeout(() => setAnimated(true), 50);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setAnimated(true), 50);
+    return () => clearTimeout(timer);
   }, [title]);
 
   useEffect(() => {
@@ -71,10 +74,10 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
     socket.on("booking:created", (booking: NotificationBooking) => {
       setNotifications((prev) => {
-        const exists = prev.some((item) => item._id === booking._id)
+        const exists = prev.some((item) => item._id === booking._id);
         if (exists) return prev;
-        return [booking, ...prev].slice(0, 5)
-      })
+        return [booking, ...prev].slice(0, 5);
+      });
 
       toast.success("New booking created", {
         description: `${booking.customerId?.fullName || "Customer"} booked ${
@@ -96,155 +99,145 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
     <header
       className="sticky top-0 z-40 flex items-center justify-between px-8 py-4"
       style={{
-        background: "linear-gradient(180deg, #1E1548 0%, #0f0b2e 100%)",
+        background: gradient.header,
         backdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(201,169,110,0.1)",
+        borderBottom: `1px solid ${border.gold}`,
+        boxShadow: shadow.soft,
       }}
     >
+      {/* LEFT */}
       <div className="flex items-center gap-4">
         <button
-          className="md:hidden p-2 rounded-xl flex-shrink-0"
+          className="md:hidden p-2 rounded-xl"
           style={{
-            backgroundColor: "#1E1548",
-            border: "1px solid rgba(201,169,110,0.3)",
+            background: gradient.goldSoft,
+            border: `1px solid ${border.gold}`,
           }}
           onClick={onMenuClick}
-          aria-label="Open menu"
         >
-          <Menu size={18} style={{ color: "#C9A96E" }} />
+          <Menu size={18} style={{ color: palette.gold }} />
         </button>
 
         <div
-          className="transition-all duration-500"
           style={{
             opacity: animated ? 1 : 0,
             transform: animated ? "translateY(0)" : "translateY(8px)",
+            transition: "all 0.4s ease",
           }}
         >
-          <h1
-            className="text-2xl font-bold"
-            style={{
-              background: "linear-gradient(135deg, #C9A96E 0%, #1E1548 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
+          <h1 className="text-2xl font-bold" style={{ color: palette.white }}>
             {title}
           </h1>
-          <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "12px" }}>
+            {subtitle}
+          </p>
         </div>
       </div>
 
+      {/* SEARCH */}
       <div
-        className="hidden md:flex items-center gap-3 px-4 py-2 rounded-xl"
+        className="hidden md:flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300"
         style={{
-          background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-          border: "1px solid rgba(30,21,72,0.08)",
-          width: "240px",
+          background: `linear-gradient(135deg, 
+            ${palette.goldDeep} 20%, 
+            ${palette.bg2} 60%, 
+            ${palette.bg3} 100%, 
+            ${palette.bg1 } 100%)`,
+          border: `1px solid ${border.gold}`,
+          width: "260px",
+          boxShadow: `
+            inset 0 1px 0 rgba(255,255,255,0.05),
+            0 4px 20px rgba(201,169,110,0.08)
+          `,
         }}
       >
-        <Search size={15} className="text-white" />
+        <Search size={15} style={{ color: palette.gold }} />
+
         <input
           type="text"
           placeholder="Search..."
-          className="bg-transparent text-sm text-white placeholder-white outline-none w-full"
+          className="bg-transparent text-sm outline-none w-full placeholder-white/50"
+          style={{
+            color: "#fff",
+          }}
+          onFocus={(e) => {
+            e.currentTarget.parentElement!.style.boxShadow = `
+              inset 0 1px 0 rgba(255,255,255,0.08),
+              0 0 0 1px ${palette.gold},
+              0 0 20px rgba(201,169,110,0.25)
+            `;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.parentElement!.style.boxShadow = `
+              inset 0 1px 0 rgba(255,255,255,0.05),
+              0 4px 20px rgba(201,169,110,0.08)
+            `;
+          }}
         />
       </div>
 
+      {/* RIGHT */}
       <div className="flex items-center gap-3">
+        {/* NOTIFICATIONS */}
         <div className="relative">
           <button
             onClick={() => setNotificationsOpen((prev) => !prev)}
-            className="relative p-2 rounded-xl transition-colors"
-            style={{ backgroundColor: "rgba(255,255,255,0.04)" }}
+            className="p-2 rounded-xl"
+            style={{
+              background: gradient.goldSoft,
+              border: `1px solid ${border.gold}`,
+            }}
           >
-            <Bell size={18} className="text-gray-400" />
-
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
-                {unreadCount}
-              </span>
-            )}
+            <Bell size={18} style={{ color: palette.gold }} />
           </button>
 
           {notificationsOpen && (
-            <div className="absolute right-0 top-12 w-80 rounded-2xl bg-white shadow-2xl border border-[rgba(30,21,72,0.08)] p-4 z-50">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-[#1E1548]">Notifications</h3>
+            <div
+              className="absolute right-0 top-12 w-80 rounded-2xl p-4 z-50"
+              style={{
+                background: gradient.card,
+                border: `1px solid ${border.light}`,
+                boxShadow: shadow.strong,
+              }}
+            >
+              <h3 style={{ color: text.primary }}>Notifications</h3>
 
-                {unreadCount > 0 && (
-                  <button
-                    onClick={() =>
-                      setReadIds(notifications.map((item) => item._id))
-                    }
-                    className="text-xs"
-                    style={{ color: "#C9A96E" }}
+              <div className="mt-3 flex flex-col gap-2">
+                {notifications.map((n) => (
+                  <Link
+                    key={n._id}
+                    href="/admin/bookings"
+                    className="p-3 rounded-xl"
+                    style={{
+                      background: palette.goldFaint,
+                    }}
                   >
-                    Mark all read
-                  </button>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-3 max-h-80 overflow-y-auto">
-                {notifications.length > 0 ? (
-                  notifications.map((booking) => {
-                    const isRead = readIds.includes(booking._id);
-
-                    return (
-                      <Link
-                        key={booking._id}
-                        href="/admin/bookings"
-                        onClick={() => {
-                          setReadIds((prev) =>
-                            prev.includes(booking._id)
-                              ? prev
-                              : [...prev, booking._id]
-                          );
-                          setNotificationsOpen(false);
-                        }}
-                        className={`rounded-xl p-3 text-sm transition ${
-                          isRead
-                            ? "bg-[#f7f6f3] opacity-60"
-                            : "bg-[rgba(201,169,110,0.13)]"
-                        } hover:bg-[#eee9dd]`}
-                      >
-                        <p className="font-medium text-[#1E1548]">
-                          New booking created
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {booking.customerId?.fullName || "Customer"} booked{" "}
-                          {booking.treatment}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {booking.date} at {booking.time}
-                        </p>
-                      </Link>
-                    );
-                  })
-                ) : (
-                  <p className="text-sm text-gray-500">No notifications</p>
-                )}
+                    <p style={{ color: text.primary }}>
+                      {n.customerId?.fullName} booked {n.treatment}
+                    </p>
+                  </Link>
+                ))}
               </div>
             </div>
           )}
         </div>
 
+        {/* USER */}
         <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="text-sm font-medium text-white">
+          <div className="hidden sm:block text-right">
+            <p style={{ color: palette.white }}>
               {session?.user?.name || "Admin"}
             </p>
-            <p className="text-xs" style={{ color: "#C9A96E" }}>
+            <p style={{ color: palette.gold, fontSize: "12px" }}>
               Administrator
             </p>
           </div>
 
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold"
+            className="w-9 h-9 rounded-xl flex items-center justify-center font-bold"
             style={{
-              background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-              color: "white",
+              background: gradient.gold,
+              color: bg.page,
             }}
           >
             {session?.user?.name?.charAt(0).toUpperCase() || "A"}

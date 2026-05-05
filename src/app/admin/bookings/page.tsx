@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Calendar,
   Clock,
-  Loader2,
   User,
   FileText,
   Search,
@@ -14,8 +13,15 @@ import {
   X,
   ChevronDown,
   Check,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { bg, text, border, palette, gradient } from "@/lib/theme";
+import {
+  PageError,
+  EmptyState,
+  TableSkeleton,
+} from "@/components/admin/StateComponents";
 
 type Customer = {
   _id: string;
@@ -65,10 +71,11 @@ export default function BookingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
+  const fetchBookings = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
+    try {
       const res = await fetch("/api/bookings");
       const data = await res.json();
 
@@ -83,9 +90,9 @@ export default function BookingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     try {
       const res = await fetch("/api/customers");
       const data = await res.json();
@@ -96,12 +103,12 @@ export default function BookingsPage() {
     } catch {
       setError("Failed to load customers.");
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchBookings();
     fetchCustomers();
-  }, []);
+  }, [fetchBookings, fetchCustomers]);
 
   const selectedCustomer = customers.find(
     (customer) => customer._id === formData.customerId
@@ -138,14 +145,13 @@ export default function BookingsPage() {
         date: booking.date,
         time: booking.time,
       });
-      setCustomerSearch("");
     } else {
       setEditingBooking(null);
       setFormData(emptyForm);
-      setCustomerSearch("");
     }
 
     setError("");
+    setCustomerSearch("");
     setCustomerDropdownOpen(false);
     setModalOpen(true);
   };
@@ -231,7 +237,8 @@ export default function BookingsPage() {
   };
 
   const handleToggleStatus = async (booking: Booking) => {
-  const newStatus = booking.status === "Completed" ? "Upcoming" : "Completed";
+    const newStatus = booking.status === "Completed" ? "Upcoming" : "Completed";
+
     try {
       const res = await fetch(`/api/bookings/${booking._id}`, {
         method: "PUT",
@@ -260,25 +267,31 @@ export default function BookingsPage() {
     <div className="space-y-6">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <p className="text-gray-400 text-sm">
-          {filteredBookings.length} booking
-          {filteredBookings.length !== 1 ? "s" : ""} total
+        <p className="text-sm" style={{ color: text.muted }}>
+          {loading
+            ? "Loading bookings..."
+            : `${filteredBookings.length} booking${
+                filteredBookings.length !== 1 ? "s" : ""
+              } shown`}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <div className="relative w-full md:w-80">
             <Search
               size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2"
+              style={{ color: text.muted }}
             />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search bookings..."
-              className="w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none"
+              disabled={loading}
+              className="w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none disabled:opacity-60"
               style={{
-                border: "1px solid rgba(30,21,72,0.15)",
-                backgroundColor: "#fafafa",
+                backgroundColor: bg.card,
+                border: `1px solid ${border.subtle}`,
+                color: text.primary,
               }}
             />
           </div>
@@ -287,8 +300,8 @@ export default function BookingsPage() {
             onClick={() => openModal()}
             className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-medium"
             style={{
-              background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-              color: "white",
+              background: gradient.gold,
+              color: bg.page,
             }}
           >
             <Plus size={15} />
@@ -297,74 +310,34 @@ export default function BookingsPage() {
         </div>
       </div>
 
-      {/* LOADING */}
-      {loading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2
-            size={32}
-            className="animate-spin"
-            style={{ color: "#C9A96E" }}
-          />
-        </div>
-      )}
+      {/* STATES */}
+      {loading && <TableSkeleton rows={6} />}
 
-      {/* ERROR */}
       {!loading && error && (
-        <div
-          className="px-4 py-3 rounded-xl text-sm text-red-600"
-          style={{
-            backgroundColor: "rgba(239,68,68,0.08)",
-            border: "1px solid rgba(239,68,68,0.2)",
-          }}
-        >
-          {error}
-        </div>
+        <PageError message={error} onRetry={fetchBookings} />
       )}
 
-      {/* EMPTY */}
       {!loading && !error && filteredBookings.length === 0 && (
-        <div
-          className="flex flex-col items-center justify-center py-20 gap-4 rounded-2xl"
-          style={{
-            border: "1px dashed rgba(201,169,110,0.3)",
-            backgroundColor: "rgba(201,169,110,0.03)",
-          }}
-        >
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(201,169,110,0.15), rgba(30,21,72,0.15))",
-            }}
-          >
-            <Calendar size={24} style={{ color: "#C9A96E" }} />
-          </div>
-
-          <div className="text-center">
-            <p className="text-gray-500 text-sm font-medium">
-              {bookings.length === 0 ? "No bookings yet" : "No bookings found"}
-            </p>
-            <p className="text-gray-400 text-xs mt-1">
-              {bookings.length === 0
-                ? "Bookings will appear here once created"
-                : "Try searching for another customer, treatment or date"}
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          icon={<Calendar size={24} style={{ color: palette.gold }} />}
+          title={bookings.length === 0 ? "No bookings yet" : "No bookings found"}
+          description={
+            bookings.length === 0
+              ? "Bookings will appear here once created"
+              : "Try searching for another customer, treatment or date"
+          }
+        />
       )}
 
       {/* TABLE */}
       {!loading && !error && filteredBookings.length > 0 && (
         <div
           className="rounded-2xl overflow-hidden"
-          style={{ border: "1px solid rgba(30,21,72,0.1)" }}
+          style={{ border: `1px solid ${border.subtle}` }}
         >
           <div
             className="grid grid-cols-10 md:grid-cols-14 px-6 py-4 text-xs font-semibold uppercase tracking-wider"
-            style={{
-              background: "linear-gradient(135deg, #1E1548, #2a1f5e)",
-              color: "#C9A96E",
-            }}
+            style={{ background: gradient.sidebar, color: palette.gold }}
           >
             <div className="col-span-3">Customer</div>
             <div className="col-span-3">Treatment</div>
@@ -378,40 +351,46 @@ export default function BookingsPage() {
             <div className="col-span-2 text-center">Actions</div>
           </div>
 
-          <div className="divide-y divide-[rgba(30,21,72,0.06)]">
+          <div>
             {filteredBookings.map((booking, i) => (
               <div
                 key={booking._id}
                 className="grid grid-cols-10 md:grid-cols-14 px-6 py-4 items-center transition-colors duration-150"
                 style={{
-                  backgroundColor:
-                    i % 2 === 0 ? "white" : "rgba(248,247,255,0.8)",
+                  backgroundColor: i % 2 === 0 ? bg.card : bg.hover,
+                  borderTop: `1px solid ${border.subtle}`,
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor =
-                    "rgba(201,169,110,0.05)")
+                  (e.currentTarget.style.backgroundColor = `${palette.gold}0d`)
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.backgroundColor =
-                    i % 2 === 0 ? "white" : "rgba(248,247,255,0.8)")
+                    i % 2 === 0 ? bg.card : bg.hover)
                 }
               >
                 <div className="col-span-3 flex items-center gap-3 min-w-0">
                   <div
-                    className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-white text-xs font-bold"
+                    className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-xs font-bold"
                     style={{
-                      background: "linear-gradient(135deg, #C9A96E, #1E1548)",
+                      background: gradient.gold,
+                      color: bg.page,
                     }}
                   >
                     <User size={14} />
                   </div>
 
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#1E1548] truncate">
+                    <p
+                      className="text-sm font-semibold truncate"
+                      style={{ color: text.primary }}
+                    >
                       {booking.customerId?.fullName || "Unknown customer"}
                     </p>
                     {booking.customerId?.email && (
-                      <p className="text-xs text-gray-400 truncate">
+                      <p
+                        className="text-xs truncate"
+                        style={{ color: text.muted }}
+                      >
                         {booking.customerId.email}
                       </p>
                     )}
@@ -419,18 +398,27 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="col-span-3 flex items-center gap-2 min-w-0">
-                  <FileText size={13} style={{ color: "#C9A96E" }} />
-                  <span className="text-sm text-[#1E1548] font-medium truncate">
+                  <FileText size={13} style={{ color: palette.gold }} />
+                  <span
+                    className="text-sm font-medium truncate"
+                    style={{ color: text.primary }}
+                  >
                     {booking.treatment}
                   </span>
                 </div>
 
-                <div className="hidden md:flex md:col-span-2 justify-center items-center gap-1 text-gray-400">
+                <div
+                  className="hidden md:flex md:col-span-2 justify-center items-center gap-1"
+                  style={{ color: text.muted }}
+                >
                   <Calendar size={13} />
                   <span className="text-xs">{booking.date}</span>
                 </div>
 
-                <div className="hidden md:flex md:col-span-2 justify-center items-center gap-1 text-gray-400">
+                <div
+                  className="hidden md:flex md:col-span-2 justify-center items-center gap-1"
+                  style={{ color: text.muted }}
+                >
                   <Clock size={13} />
                   <span className="text-xs">{booking.time}</span>
                 </div>
@@ -441,14 +429,16 @@ export default function BookingsPage() {
                     className="text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105"
                     style={{
                       backgroundColor:
-                        booking.status === "completed"
+                        booking.status === "Completed"
                           ? "rgba(52,211,153,0.14)"
-                          : "rgba(201,169,110,0.12)",
+                          : `${palette.gold}1f`,
                       color:
-                        booking.status === "completed" ? "#059669" : "#1E1548",
+                        booking.status === "Completed"
+                          ? "#059669"
+                          : text.primary,
                     }}
                   >
-                    {booking.status || "pending"}
+                    {booking.status || "Upcoming"}
                   </button>
                 </div>
 
@@ -457,8 +447,9 @@ export default function BookingsPage() {
                     onClick={() => openModal(booking)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105"
                     style={{
-                      backgroundColor: "rgba(30,21,72,0.07)",
-                      color: "#1E1548",
+                      backgroundColor: `${palette.gold}1a`,
+                      color: palette.gold,
+                      border: `1px solid ${border.gold}`,
                     }}
                   >
                     <Pencil size={12} />
@@ -471,6 +462,7 @@ export default function BookingsPage() {
                     style={{
                       backgroundColor: "rgba(239,68,68,0.08)",
                       color: "#dc2626",
+                      border: "1px solid rgba(239,68,68,0.2)",
                     }}
                   >
                     <Trash2 size={12} />
@@ -484,16 +476,16 @@ export default function BookingsPage() {
           <div
             className="px-6 py-3 flex items-center justify-between"
             style={{
-              backgroundColor: "rgba(248,247,255,0.9)",
-              borderTop: "1px solid rgba(30,21,72,0.08)",
+              borderTop: `1px solid ${border.subtle}`,
+              backgroundColor: bg.hover,
             }}
           >
-            <p className="text-xs text-gray-400">
+            <p className="text-xs" style={{ color: text.muted }}>
               Showing {filteredBookings.length} booking
               {filteredBookings.length !== 1 ? "s" : ""}
             </p>
 
-            <p className="text-xs" style={{ color: "#C9A96E" }}>
+            <p className="text-xs" style={{ color: palette.gold }}>
               {bookings.length} total
             </p>
           </div>
@@ -509,15 +501,18 @@ export default function BookingsPage() {
             backdropFilter: "blur(4px)",
           }}
         >
-          <div className="w-full max-w-lg rounded-2xl overflow-visible shadow-2xl bg-white">
+          <div
+            className="w-full max-w-lg rounded-2xl overflow-visible shadow-2xl"
+            style={{ backgroundColor: bg.card }}
+          >
             <div
               className="flex items-center justify-between px-6 py-5 rounded-t-2xl"
               style={{
-                background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-                color: "white",
+                background: gradient.gold,
+                color: bg.page,
               }}
             >
-              <h2 className="text-white font-semibold text-lg">
+              <h2 className="font-semibold text-lg">
                 {editingBooking ? "Edit Booking" : "Add New Booking"}
               </h2>
 
@@ -530,21 +525,13 @@ export default function BookingsPage() {
             </div>
 
             <div className="px-6 py-6 space-y-4">
-              {error && (
-                <div
-                  className="px-4 py-3 rounded-xl text-sm text-red-600"
-                  style={{
-                    backgroundColor: "rgba(239,68,68,0.08)",
-                    border: "1px solid rgba(239,68,68,0.2)",
-                  }}
-                >
-                  {error}
-                </div>
-              )}
+              {error && <PageError message={error} />}
 
-              {/* CUSTOMER DROPDOWN */}
               <div className="flex flex-col gap-1.5 relative">
-                <label className="text-sm font-medium text-[#1E1548]">
+                <label
+                  className="text-sm font-medium"
+                  style={{ color: text.primary }}
+                >
                   Customer
                 </label>
 
@@ -555,45 +542,52 @@ export default function BookingsPage() {
                   }
                   className="w-full px-4 py-3 rounded-xl text-sm outline-none flex items-center justify-between text-left"
                   style={{
-                    border: "1px solid rgba(30,21,72,0.15)",
-                    backgroundColor: "#fafafa",
+                    border: `1px solid ${border.subtle}`,
+                    backgroundColor: bg.card,
+                    color: text.primary,
                   }}
                 >
                   <div className="min-w-0">
                     {selectedCustomer ? (
                       <>
-                        <p className="font-medium text-[#1E1548] truncate">
+                        <p className="font-medium truncate">
                           {selectedCustomer.fullName || "Unnamed customer"}
                         </p>
-                        <p className="text-xs text-gray-400 truncate">
+                        <p
+                          className="text-xs truncate"
+                          style={{ color: text.muted }}
+                        >
                           {selectedCustomer.email}
                         </p>
                       </>
                     ) : (
-                      <span className="text-gray-400">Select customer</span>
+                      <span style={{ color: text.muted }}>Select customer</span>
                     )}
                   </div>
 
                   <ChevronDown
                     size={17}
-                    className={`text-gray-400 transition-transform ${
+                    className={`transition-transform ${
                       customerDropdownOpen ? "rotate-180" : ""
                     }`}
+                    style={{ color: text.muted }}
                   />
                 </button>
 
                 {customerDropdownOpen && (
                   <div
-                    className="absolute top-full left-0 right-0 mt-2 z-[70] rounded-2xl bg-white shadow-2xl overflow-hidden"
+                    className="absolute top-full left-0 right-0 mt-2 z-[70] rounded-2xl shadow-2xl overflow-hidden"
                     style={{
-                      border: "1px solid rgba(30,21,72,0.12)",
+                      border: `1px solid ${border.subtle}`,
+                      backgroundColor: bg.card,
                     }}
                   >
-                    <div className="p-3 border-b border-[rgba(30,21,72,0.08)]">
+                    <div className="p-3" style={{ borderBottom: `1px solid ${border.subtle}` }}>
                       <div className="relative">
                         <Search
                           size={15}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                          className="absolute left-3 top-1/2 -translate-y-1/2"
+                          style={{ color: text.muted }}
                         />
                         <input
                           value={customerSearch}
@@ -601,8 +595,9 @@ export default function BookingsPage() {
                           placeholder="Search customer..."
                           className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none"
                           style={{
-                            border: "1px solid rgba(30,21,72,0.12)",
-                            backgroundColor: "#fafafa",
+                            border: `1px solid ${border.subtle}`,
+                            backgroundColor: bg.card,
+                            color: text.primary,
                           }}
                         />
                       </div>
@@ -622,14 +617,14 @@ export default function BookingsPage() {
                               setCustomerSearch("");
                               setCustomerDropdownOpen(false);
                             }}
-                            className="w-full px-4 py-3 flex items-center justify-between gap-3 text-left hover:bg-[rgba(201,169,110,0.06)] transition-colors"
+                            className="w-full px-4 py-3 flex items-center justify-between gap-3 text-left transition-colors"
                           >
                             <div className="flex items-center gap-3 min-w-0">
                               <div
-                                className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-white text-xs font-bold"
+                                className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-bold"
                                 style={{
-                                  background:
-                                    "linear-gradient(135deg, #C9A96E, #1E1548)",
+                                  background: gradient.gold,
+                                  color: bg.page,
                                 }}
                               >
                                 {(customer.fullName || customer.email)
@@ -638,22 +633,28 @@ export default function BookingsPage() {
                               </div>
 
                               <div className="min-w-0">
-                                <p className="text-sm font-semibold text-[#1E1548] truncate">
+                                <p
+                                  className="text-sm font-semibold truncate"
+                                  style={{ color: text.primary }}
+                                >
                                   {customer.fullName || "Unnamed customer"}
                                 </p>
-                                <p className="text-xs text-gray-400 truncate">
+                                <p
+                                  className="text-xs truncate"
+                                  style={{ color: text.muted }}
+                                >
                                   {customer.email}
                                 </p>
                               </div>
                             </div>
 
                             {formData.customerId === customer._id && (
-                              <Check size={16} style={{ color: "#C9A96E" }} />
+                              <Check size={16} style={{ color: palette.gold }} />
                             )}
                           </button>
                         ))
                       ) : (
-                        <p className="px-4 py-5 text-sm text-gray-400 text-center">
+                        <p className="px-4 py-5 text-sm text-center" style={{ color: text.muted }}>
                           No customers found
                         </p>
                       )}
@@ -662,60 +663,29 @@ export default function BookingsPage() {
                 )}
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-[#1E1548]">
-                  Treatment
-                </label>
-                <input
-                  value={formData.treatment}
-                  onChange={(e) =>
-                    setFormData({ ...formData, treatment: e.target.value })
-                  }
-                  placeholder="e.g. Hyperpigmentation Consultation"
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                  style={{
-                    border: "1px solid rgba(30,21,72,0.15)",
-                    backgroundColor: "#fafafa",
-                  }}
-                />
-              </div>
+              <InputField
+                label="Treatment"
+                value={formData.treatment}
+                onChange={(value) =>
+                  setFormData({ ...formData, treatment: value })
+                }
+                placeholder="e.g. Hyperpigmentation Consultation"
+              />
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-[#1E1548]">
-                    Date
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, date: e.target.value })
-                    }
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                    style={{
-                      border: "1px solid rgba(30,21,72,0.15)",
-                      backgroundColor: "#fafafa",
-                    }}
-                  />
-                </div>
+                <InputField
+                  label="Date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(value) => setFormData({ ...formData, date: value })}
+                />
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-[#1E1548]">
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    value={formData.time}
-                    onChange={(e) =>
-                      setFormData({ ...formData, time: e.target.value })
-                    }
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                    style={{
-                      border: "1px solid rgba(30,21,72,0.15)",
-                      backgroundColor: "#fafafa",
-                    }}
-                  />
-                </div>
+                <InputField
+                  label="Time"
+                  type="time"
+                  value={formData.time}
+                  onChange={(value) => setFormData({ ...formData, time: value })}
+                />
               </div>
             </div>
 
@@ -724,8 +694,8 @@ export default function BookingsPage() {
                 onClick={closeModal}
                 className="flex-1 py-3 rounded-xl text-sm font-medium"
                 style={{
-                  backgroundColor: "rgba(30,21,72,0.05)",
-                  color: "#1E1548",
+                  backgroundColor: bg.hover,
+                  color: text.primary,
                 }}
               >
                 Cancel
@@ -736,8 +706,8 @@ export default function BookingsPage() {
                 disabled={isSaving}
                 className="flex-1 py-3 rounded-xl text-sm font-semibold"
                 style={{
-                  background: "linear-gradient(135deg, #C9A96E, #1E1548)",
-                  color: "white",
+                  background: gradient.gold,
+                  color: bg.page,
                 }}
               >
                 {isSaving ? (
@@ -765,7 +735,10 @@ export default function BookingsPage() {
             backdropFilter: "blur(4px)",
           }}
         >
-          <div className="w-full max-w-sm rounded-2xl bg-white overflow-hidden shadow-2xl">
+          <div
+            className="w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
+            style={{ backgroundColor: bg.card }}
+          >
             <div className="px-6 py-6 text-center">
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -774,11 +747,14 @@ export default function BookingsPage() {
                 <Trash2 size={22} className="text-red-500" />
               </div>
 
-              <h3 className="text-lg font-semibold text-[#1E1548] mb-2">
+              <h3
+                className="text-lg font-semibold mb-2"
+                style={{ color: text.primary }}
+              >
                 Delete Booking?
               </h3>
 
-              <p className="text-gray-400 text-sm">
+              <p className="text-sm" style={{ color: text.muted }}>
                 This action cannot be undone.
               </p>
             </div>
@@ -788,8 +764,8 @@ export default function BookingsPage() {
                 onClick={() => setDeleteConfirm(null)}
                 className="flex-1 py-3 rounded-xl text-sm"
                 style={{
-                  backgroundColor: "rgba(30,21,72,0.05)",
-                  color: "#1E1548",
+                  backgroundColor: bg.hover,
+                  color: text.primary,
                 }}
               >
                 Cancel
@@ -805,6 +781,40 @@ export default function BookingsPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function InputField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-medium" style={{ color: text.primary }}>
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+        style={{
+          border: `1px solid ${border.subtle}`,
+          backgroundColor: bg.card,
+          color: text.primary,
+        }}
+      />
     </div>
   );
 }
