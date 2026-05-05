@@ -1,9 +1,10 @@
-import { Button } from "@/components/ui/button";
+import HeroSection from "@/components/public/HeroSection";
 
-export default function Home() {
+
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <Button>Brook Skincare</Button>
+    <main>
+      <HeroSection />
     </main>
   );
 }
