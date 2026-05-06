@@ -258,17 +258,19 @@ export default function HeroSection() {
                   Book a Consultation
                   <ArrowRight size={16} />
                 </Link>
-                <Link
-                  href="/services"
-                  className="flex items-center gap-2 px-7 py-4 rounded-full font-medium text-sm transition-all hover:-translate-y-0.5"
-                  style={{
-                    backgroundColor: "rgba(255,255,255,0.06)",
-                    color: "rgba(255,255,255,0.8)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                  }}
-                >
-                  Our Services
-                </Link>
+                <a
+                    href="https://www.youtube.com/channel/UCQqGytMj-iIbDnqlyTfn7vw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm font-medium transition-all hover:-translate-y-0.5 bg-amber-50 rounded-2xl p-4"
+                    style={{ color: "#9A7A2E" }}
+                    >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000">
+                    <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58a2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z"/>
+                    <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+                  </svg>
+                  Our YouTube Channel
+                </a>
               </div>
             </div>
           </div>

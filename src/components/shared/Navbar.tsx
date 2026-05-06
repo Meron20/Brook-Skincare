@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { useSiteSettings } from "@/components/public/SettingsProvider";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -20,6 +21,9 @@ const dropdownLinks = [
 ];
 
 export default function Navbar() {
+
+  const { logoUrl, clinicName } = useSiteSettings();
+
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -56,8 +60,8 @@ export default function Navbar() {
           {/* LEFT — Logo */}
           <Link href="/" onClick={closeMobileMenu}>
             <Image
-              src="/brook-logo.jpeg"
-              alt="Brook Skincare Logo"
+              src={logoUrl}
+              alt={clinicName}
               width={56}
               height={56}
               loading="eager"
@@ -212,8 +216,8 @@ export default function Navbar() {
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
           <Image
-            src="/brook-logo.jpeg"
-            alt="Brook Skincare Logo"
+            src={logoUrl}
+            alt={clinicName}
             width={48}
             height={48}
             priority
