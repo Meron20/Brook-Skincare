@@ -86,20 +86,45 @@ export default function ContactFormSection() {
     <>
       <section
         id="contact-form"
-        className="relative px-4 py-16 sm:px-5 md:px-8 md:py-20"
+        className="relative overflow-hidden px-4 py-24 sm:px-6 md:px-8 lg:px-12"
+        style={{ backgroundColor: "#F0F7F2" }}
       >
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse 50% 50% at 15% 45%, rgba(201,168,76,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 85% 30%, rgba(74,144,164,0.05) 0%, transparent 50%)
+            `,
+          }}
+        />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div>
-              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.28em] text-[#C9A84C]">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#9A7A2E]">
                 Your Message
               </p>
 
               <h2
-                className="max-w-3xl text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                className="max-w-3xl font-light leading-[1.15] text-[#0A1F14]"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                }}
               >
-                Tell us what your skin needs help with.
+                Tell us what your skin{" "}
+                <strong
+                  className="font-semibold"
+                  style={{
+                    background: "linear-gradient(135deg, #C9A84C, #E8C96A)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  needs help with.
+                </strong>
               </h2>
 
               <div className="mt-9 space-y-5">
@@ -108,6 +133,7 @@ export default function ContactFormSection() {
                   title="Secure & confidential"
                   text="Your message is treated privately and only used to understand your skin concern."
                 />
+
                 <InfoCard
                   icon={<HeartPulse size={26} strokeWidth={1.8} />}
                   title="Personalised support"
@@ -119,17 +145,19 @@ export default function ContactFormSection() {
                 {stats.map(({ icon, value, label }) => (
                   <div
                     key={label}
-                    className="rounded-2xl border border-[#071F14]/10 bg-[#FFF7F0] p-4 text-center shadow-sm transition-all duration-700 hover:-translate-y-1 hover:border-[#C9A84C]/50"
+                    className="rounded-2xl border border-[#071F14]/10 bg-white/70 p-4 text-center shadow-sm backdrop-blur-xl transition-all duration-700 hover:-translate-y-1 hover:border-[#C9A84C]/50 hover:bg-white"
                   >
                     <div className="mb-2 flex justify-center text-[#C9A84C]">
                       {icon}
                     </div>
+
                     <p
-                      className="text-2xl font-semibold text-[#5D3434]"
+                      className="text-2xl font-semibold text-[#0A1F14]"
                       style={{ fontFamily: "'Cormorant Garamond', serif" }}
                     >
                       {value}
                     </p>
+
                     <p className="text-xs text-[#343454]/55">{label}</p>
                   </div>
                 ))}
@@ -137,7 +165,7 @@ export default function ContactFormSection() {
             </div>
 
             <div
-              className="relative overflow-hidden rounded-[1.75rem] border border-[#C9A84C]/25 bg-[#071F14] p-5 shadow-2xl shadow-[#071F14]/25 sm:p-7 md:rounded-[2rem] md:p-10"
+              className="relative overflow-hidden rounded-[2rem] border border-[#C9A84C]/25 bg-[#071F14] p-6 shadow-2xl shadow-[#071F14]/25 sm:p-8 md:p-10"
               style={{
                 opacity: isVisible ? 1 : 0,
                 transform: isVisible ? "translateY(0)" : "translateY(28px)",
@@ -153,7 +181,7 @@ export default function ContactFormSection() {
                 className="relative z-10 space-y-5"
               >
                 <h2
-                  className="mb-6 text-4xl font-semibold text-white md:text-5xl"
+                  className="mb-6 text-[2rem] font-semibold leading-tight text-white md:text-[2.6rem]"
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   Send Us a <span className="text-[#C9A84C]">Message</span>
@@ -166,6 +194,7 @@ export default function ContactFormSection() {
                       placeholder="First Name"
                       className={inputClass}
                     />
+
                     {errors.firstName && (
                       <p className={errorClass}>
                         <AlertCircle size={14} />
@@ -180,6 +209,7 @@ export default function ContactFormSection() {
                       placeholder="Last Name"
                       className={inputClass}
                     />
+
                     {errors.lastName && (
                       <p className={errorClass}>
                         <AlertCircle size={14} />
@@ -197,6 +227,7 @@ export default function ContactFormSection() {
                       placeholder="Email"
                       className={inputClass}
                     />
+
                     {errors.email && (
                       <p className={errorClass}>
                         <AlertCircle size={14} />
@@ -214,33 +245,6 @@ export default function ContactFormSection() {
                     />
                   </div>
                 </div>
-                {/* TODO:-Add this section if needed */}
-                {/* <div>
-                  <select {...register("concern")} className={inputClass}>
-                    <option value="" className="bg-[#071F14]">
-                      Select your skin concern...
-                    </option>
-                    <option value="Hyperpigmentation" className="bg-[#071F14]">
-                      Hyperpigmentation
-                    </option>
-                    <option value="Acne" className="bg-[#071F14]">
-                      Acne
-                    </option>
-                    <option value="Melasma" className="bg-[#071F14]">
-                      Melasma
-                    </option>
-                    <option value="Dry Skin" className="bg-[#071F14]">
-                      Dry Skin
-                    </option>
-                  </select>
-
-                  {errors.concern && (
-                    <p className={errorClass}>
-                      <AlertCircle size={14} />
-                      {errors.concern.message}
-                    </p>
-                  )}
-                </div> */}
 
                 <div>
                   <textarea
