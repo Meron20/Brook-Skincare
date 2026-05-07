@@ -247,7 +247,7 @@ export default function HeroSection() {
               {/* CTA Button */}
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/login"
+                  href="/services"
                   className="flex items-center gap-2 px-7 py-4 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl"
                   style={{
                     background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
@@ -391,7 +391,7 @@ export default function HeroSection() {
               {/* Booking CTA inside card */}
               <div className="mt-8 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                 <Link
-                  href="/login"
+                  href="/services"
                   className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl"
                   style={{
                     background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",

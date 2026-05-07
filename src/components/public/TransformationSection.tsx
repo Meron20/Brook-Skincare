@@ -348,7 +348,7 @@ export default function TransformationSection() {
             Ready to start your own transformation?
           </p>
           <Link
-            href="/login"
+            href="/services"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl"
             style={{
               background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
