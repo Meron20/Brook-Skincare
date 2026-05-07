@@ -156,7 +156,7 @@ export default function Navbar() {
                 Sign Out
               </Button>
             ) : (
-              <Link href="/login">
+              <Link href="/services">
                 <Button
                   className="hidden md:flex text-sm px-5 py-2 rounded-full font-semibold transition-all hover:-translate-y-0.5 hover:shadow-lg"
                   style={{
@@ -324,7 +324,7 @@ export default function Navbar() {
                 Sign Out
               </Button>
             ) : (
-              <Link href="/login" onClick={closeMobileMenu} className="block w-full">
+              <Link href="/services" onClick={closeMobileMenu} className="block w-full">
                 <Button
                   className="w-full text-sm px-5 py-3 rounded-full font-semibold"
                   style={{

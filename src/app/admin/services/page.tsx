@@ -90,7 +90,7 @@ export default function ServicesPage() {
     setIsSaving(true);
     setError("");
     try {
-      const url = editingService ? `/api/admin/services/${editingService._id}` : "/api/services";
+      const url = editingService ? `/api/admin/services/${editingService._id}` : "/api/admin/services";
       const method = editingService ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -113,7 +113,7 @@ export default function ServicesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`/api/services/${id}`, { method: "DELETE" });
+      await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
       await fetchServices();
       setDeleteConfirm(null);
     } catch {

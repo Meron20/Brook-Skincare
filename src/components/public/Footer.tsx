@@ -22,7 +22,7 @@ const footerLinks = {
   ],
   Clinic: [
     { label: "About Brook", href: "/about" },
-    { label: "Book Appointment", href: "/login" },
+    { label: "Book Appointment", href: "/services" },
     { label: "Contact Us", href: "/contact" },
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
@@ -52,7 +52,7 @@ const footerLinks = {
           },
           {
             label: "WhatsApp",
-            href: "https://wa.me/46000000000",
+            href: "https://wa.me/46790409411",
             show: true,
             icon: (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -246,17 +246,17 @@ const footerLinks = {
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
               <p
-                className="text-xs font-bold uppercase tracking-widest mb-5"
+                className="text-xs font-bold uppercase tracking-widest mb-5 pt-4"
                 style={{ color: "white" }}
               >
                 {title}
               </p>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-3  ">
                 {links.map(link => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm transition-colors"
+                      className="text-sm transition-colors "
                       style={{ color: "rgba(255,255,255,0.45)" }}
                       onMouseEnter={e => e.currentTarget.style.color = "#C9A84C"}
                       onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
