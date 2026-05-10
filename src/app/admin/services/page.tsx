@@ -62,7 +62,7 @@ export default function ServicesPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/services");
+      const res = await fetch("/api/admin/services");
       const data = await res.json();
 
       if (!res.ok) {
@@ -124,8 +124,8 @@ export default function ServicesPage() {
 
     try {
       const url = editingService
-        ? `/api/services/${editingService._id}`
-        : "/api/services";
+        ? `/api/admin/services/${editingService._id}`
+        : "/api/admin/services";
 
       const method = editingService ? "PUT" : "POST";
 
@@ -153,7 +153,7 @@ export default function ServicesPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/services/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
 
       if (!res.ok) {
         setError("Failed to delete service.");
@@ -169,7 +169,7 @@ export default function ServicesPage() {
 
   const handleToggleActive = async (service: Service) => {
     try {
-      const res = await fetch(`/api/services/${service._id}`, {
+      const res = await fetch(`/api/admin/services/${service._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...service, isActive: !service.isActive }),
