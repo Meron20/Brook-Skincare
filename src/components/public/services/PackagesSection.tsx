@@ -59,7 +59,7 @@ export default function PackagesSection() {
   return (
     <section
       ref={sectionRef}
-      className="py-24 relative overflow-hidden"
+      className="py-6 relative overflow-hidden"
       style={{ backgroundColor: "#F0F7F2" }}
     >
       {/* Background */}
@@ -77,7 +77,7 @@ export default function PackagesSection() {
 
         {/* ── HEADER ── */}
         <div
-          className="text-center mb-16"
+          className="text-center mb-12"
           style={{
             opacity: isVisible ? 1 : 0,
             transform: isVisible ? "translateY(0)" : "translateY(30px)",
@@ -250,7 +250,7 @@ export default function PackagesSection() {
 
                 {/* CTA */}
                 <Link
-                  href="/login"
+                  href="/booking/slot"
                   className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-semibold text-sm transition-all hover:-translate-y-0.5"
                   style={{
                     background: pkg.featured

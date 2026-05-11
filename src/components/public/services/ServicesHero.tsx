@@ -120,13 +120,13 @@ export default function ServicesHero() {
         </div>
       </div>
 
-      {/* Bottom wave */}
+      {/* Bottom wave
       <div
         className="absolute bottom-0 left-0 right-0 h-16"
         style={{
           background: "linear-gradient(to bottom, transparent, #F0F7F2)",
         }}
-      />
+      /> */}
     </section>
   );
 }

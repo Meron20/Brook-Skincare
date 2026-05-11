@@ -389,6 +389,17 @@ const footerLinks = {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/login"
+              className="text-xs transition-colors"
+              style={{ color: "rgba(255,255,255,0.15)" }}
+              onMouseEnter={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+              onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.15)"}
+            >
+              Admin
+            </Link>
+
+
           </div>
         </div>
       </div>

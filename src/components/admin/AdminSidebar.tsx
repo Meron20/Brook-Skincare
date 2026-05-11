@@ -13,6 +13,7 @@ import {
   BookOpen,
   History,
   Settings,
+  GraduationCap,
   LogOut,
   X,
   ExternalLink
@@ -25,6 +26,7 @@ const navItems = [
   { icon: Users, label: "Customers", href: "/admin/customers"},
   { icon: CalendarCheck, label: "Bookings", href: "/admin/bookings" },
   { icon: BookOpen, label: "Journal", href: "/admin/journal" },
+  { icon: GraduationCap, label: "Learn", href: "/admin/learn" }, 
   { icon: History, label: "History", href: "/admin/history" },
   { icon: Settings, label: "Settings", href: "/admin/settings" },
 ];

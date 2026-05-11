@@ -88,7 +88,7 @@ const TransformationCard = ({ t }: { t: Transformation }) => (
           <div
             className="absolute top-2 left-2 z-10 px-2 py-1 rounded-full font-semibold uppercase"
             style={{
-              backgroundColor: "rgba(239,68,68,0.15)",
+              backgroundColor: "white",
               border: "1px solid rgba(239,68,68,0.3)",
               color: "#ef4444",
               backdropFilter: "blur(8px)",
@@ -117,7 +117,7 @@ const TransformationCard = ({ t }: { t: Transformation }) => (
           <div
             className="absolute top-2 right-2 z-10 px-2 py-1 rounded-full font-semibold uppercase"
             style={{
-              backgroundColor: "rgba(52,211,153,0.15)",
+              backgroundColor: "white",
               border: "1px solid rgba(52,211,153,0.3)",
               color: "#34d399",
               backdropFilter: "blur(8px)",

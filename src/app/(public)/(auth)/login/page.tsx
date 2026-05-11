@@ -93,7 +93,7 @@ export default function AuthPage() {
         if (session?.user?.role === "admin") {
           router.push("/admin");
         } else {
-          router.push("/services");
+          router.push("/booking/slot");
         }
       }, 1000);
 
