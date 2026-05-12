@@ -9,7 +9,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // ── SCHEMAS ──
 const loginSchema = z.object({
@@ -48,7 +48,8 @@ export default function AuthPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
-
+const searchParams = useSearchParams();
+const redirectPath = searchParams.get("redirect") || "/services";
   // ── REGISTER FORM ──
   const {
     register: registerSignup,
@@ -136,7 +137,9 @@ export default function AuthPage() {
         setServerSuccess("Account created! Please sign in with your new account.");
       }, 1000);
 
-      setTimeout(() => router.push("/login"), 1000);
+      setTimeout(() => {
+  router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
+}, 1000);
 
     } catch {
       setServerError("Server error. Please try again later.");
