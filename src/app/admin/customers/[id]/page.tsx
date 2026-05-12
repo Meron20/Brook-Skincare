@@ -9,7 +9,6 @@ import {
   Calendar,
   FileText,
   Clock,
-  Plus,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import {
   EmptyState,
   TableSkeleton,
 } from "@/components/admin/StateComponents";
+import Link from "next/link";
 
 type Customer = {
   _id: string;
@@ -27,14 +27,6 @@ type Customer = {
   phone?: string;
   skinConcern?: string;
   createdAt?: string;
-};
-
-type JournalNote = {
-  _id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  createdBy?: string;
 };
 
 type Booking = {
@@ -59,17 +51,12 @@ export default function CustomerCardPage() {
   const customerId = params.id as string;
 
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [notes, setNotes] = useState<JournalNote[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
   const [loading, setLoading] = useState(true);
-  const [isSavingNote, setIsSavingNote] = useState(false);
   const [isSavingBooking, setIsSavingBooking] = useState(false);
   const [error, setError] = useState("");
-
-  const [noteTitle, setNoteTitle] = useState("");
-  const [noteContent, setNoteContent] = useState("");
 
   const [newTreatment, setNewTreatment] = useState("");
   const [newDate, setNewDate] = useState("");
@@ -89,7 +76,6 @@ export default function CustomerCardPage() {
       }
 
       setCustomer(data.customer);
-      setNotes(data.notes || []);
       setBookings(data.bookings || []);
       setActivityLogs(data.activityLogs || []);
     } catch {
@@ -102,50 +88,6 @@ export default function CustomerCardPage() {
   useEffect(() => {
     if (customerId) fetchCustomer();
   }, [customerId, fetchCustomer]);
-
-  const handleAddNote = async () => {
-    if (!noteTitle.trim() || !noteContent.trim()) {
-      setError("Please enter both note title and content.");
-      return;
-    }
-
-    try {
-      setIsSavingNote(true);
-      setError("");
-
-      const res = await fetch("/api/journal-notes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId, title: noteTitle, content: noteContent }),
-      });
-
-      const newNote = await res.json();
-
-      if (!res.ok) {
-        setError(newNote.message || "Failed to create journal note.");
-        return;
-      }
-
-      setNotes((prev) => [newNote, ...prev]);
-      setActivityLogs((prev) => [
-        {
-          _id: crypto.randomUUID(),
-          type: "Journal Note",
-          description: `Journal note added: ${newNote.title}`,
-          createdAt: newNote.createdAt || new Date().toISOString(),
-          createdBy: "Admin",
-        },
-        ...prev,
-      ]);
-
-      setNoteTitle("");
-      setNoteContent("");
-    } catch {
-      setError("Could not save journal note.");
-    } finally {
-      setIsSavingNote(false);
-    }
-  };
 
   const handleCreateBooking = async () => {
     if (!newTreatment.trim() || !newDate || !newTime) {
@@ -241,6 +183,17 @@ export default function CustomerCardPage() {
               <p className="text-white/60 text-sm mt-1">{customer.email}</p>
             </div>
           </div>
+
+          <Link
+            href={`/admin/customers/${customerId}/journal`}
+            className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold"
+            style={{
+              background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
+              color: "#0A1F14",
+            }}
+          >
+            Open Journal
+          </Link>
         </div>
       </section>
 
@@ -250,10 +203,26 @@ export default function CustomerCardPage() {
         <div className="xl:col-span-1 space-y-6">
           <Panel title="Customer Information">
             <div className="space-y-4 text-sm">
-              <InfoRow icon={<User className="w-4 h-4" />} label="Full name" value={customer.fullName || "Not provided"} />
-              <InfoRow icon={<Mail className="w-4 h-4" />} label="Email" value={customer.email} />
-              <InfoRow icon={<Phone className="w-4 h-4" />} label="Phone" value={customer.phone || "Not provided"} />
-              <InfoRow icon={<FileText className="w-4 h-4" />} label="Skin concern" value={customer.skinConcern || "Not specified"} />
+              <InfoRow
+                icon={<User className="w-4 h-4" />}
+                label="Full name"
+                value={customer.fullName || "Not provided"}
+              />
+              <InfoRow
+                icon={<Mail className="w-4 h-4" />}
+                label="Email"
+                value={customer.email}
+              />
+              <InfoRow
+                icon={<Phone className="w-4 h-4" />}
+                label="Phone"
+                value={customer.phone || "Not provided"}
+              />
+              <InfoRow
+                icon={<FileText className="w-4 h-4" />}
+                label="Skin concern"
+                value={customer.skinConcern || "Not specified"}
+              />
               <InfoRow
                 icon={<Calendar className="w-4 h-4" />}
                 label="Created at"
@@ -274,17 +243,9 @@ export default function CustomerCardPage() {
                 placeholder="Treatment"
               />
 
-              <InputField
-                type="date"
-                value={newDate}
-                onChange={setNewDate}
-              />
+              <InputField type="date" value={newDate} onChange={setNewDate} />
 
-              <InputField
-                type="time"
-                value={newTime}
-                onChange={setNewTime}
-              />
+              <InputField type="time" value={newTime} onChange={setNewTime} />
 
               <Button
                 onClick={handleCreateBooking}
@@ -323,7 +284,9 @@ export default function CustomerCardPage() {
                             ? "rgba(52,211,153,0.14)"
                             : `${palette.gold}1f`,
                         color:
-                          booking.status === "Completed" ? "#059669" : text.primary,
+                          booking.status === "Completed"
+                            ? "#059669"
+                            : text.primary,
                       }}
                     >
                       {booking.status || "Upcoming"}
@@ -339,70 +302,9 @@ export default function CustomerCardPage() {
               )}
             </div>
           </Panel>
-
-          <Panel title="Add Journal Note">
-            <div className="flex flex-col gap-4">
-              <InputField
-                value={noteTitle}
-                onChange={setNoteTitle}
-                placeholder="Note title"
-              />
-
-              <TextAreaField
-                value={noteContent}
-                onChange={setNoteContent}
-                placeholder="Write journal note..."
-              />
-
-              <Button
-                onClick={handleAddNote}
-                disabled={isSavingNote}
-                className="rounded-xl w-full py-3 text-sm font-semibold"
-                style={{ background: gradient.gold, color: bg.page }}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {isSavingNote ? "Saving..." : "Save Note"}
-              </Button>
-            </div>
-          </Panel>
         </div>
 
         <div className="xl:col-span-2 space-y-6">
-          <Panel title="Journal Notes">
-            <div className="space-y-4">
-              {notes.length > 0 ? (
-                notes.map((note, i) => (
-                  <CardItem key={note._id} index={i}>
-                    <div className="flex justify-between gap-4">
-                      <h3 className="font-semibold" style={{ color: text.primary }}>
-                        {note.title}
-                      </h3>
-                      <p className="text-xs" style={{ color: text.muted }}>
-                        {new Date(note.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-
-                    <p className="text-sm mt-3 leading-6" style={{ color: text.secondary }}>
-                      {note.content}
-                    </p>
-
-                    {note.createdBy && (
-                      <p className="text-xs mt-3" style={{ color: text.muted }}>
-                        Created by: {note.createdBy}
-                      </p>
-                    )}
-                  </CardItem>
-                ))
-              ) : (
-                <EmptyState
-                  icon={<FileText size={22} style={{ color: palette.gold }} />}
-                  title="No journal notes yet"
-                  description="Journal notes for this customer will appear here"
-                />
-              )}
-            </div>
-          </Panel>
-
           <Panel title="History">
             <div className="space-y-5">
               {activityLogs.length > 0 ? (
@@ -448,7 +350,13 @@ export default function CustomerCardPage() {
   );
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function Panel({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div
       className="rounded-2xl overflow-hidden"
@@ -536,31 +444,6 @@ function InputField({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-      style={{
-        border: `1px solid ${border.subtle}`,
-        backgroundColor: bg.card,
-        color: text.primary,
-      }}
-    />
-  );
-}
-
-function TextAreaField({
-  value,
-  onChange,
-  placeholder,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}) {
-  return (
-    <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      rows={5}
-      className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
       style={{
         border: `1px solid ${border.subtle}`,
         backgroundColor: bg.card,

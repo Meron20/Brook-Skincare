@@ -4,6 +4,7 @@ import User from "@/models/User";
 import JournalNote from "@/models/JournalNote";
 import Booking from "@/models/Booking";
 import ActivityLog from "@/models/ActivityLog";
+import ConsultationForm from "@/models/ConsultationForm";
 
 export async function GET(
   req: Request,
@@ -34,8 +35,12 @@ export async function GET(
     });
 
     const activityLogs = await ActivityLog.find({ customerId: id }).sort({
-    createdAt: -1,
-  });
+      createdAt: -1,
+    });
+
+    const consultationForms = await ConsultationForm.find({ userId: id }).sort({
+      createdAt: -1,
+    });
 
     return NextResponse.json(
       {
@@ -43,6 +48,7 @@ export async function GET(
         notes,
         bookings,
         activityLogs,
+        consultationForms,
       },
       { status: 200 }
     );

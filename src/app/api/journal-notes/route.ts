@@ -3,6 +3,30 @@ import { connectDB } from "@/lib/mongodb";
 import JournalNote from "@/models/JournalNote";
 import ActivityLog from "@/models/ActivityLog";
 
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const customerId = searchParams.get("customerId");
+
+    await connectDB();
+
+    const query = customerId ? { customerId } : {};
+
+    const notes = await JournalNote.find(query)
+      .populate("customerId", "fullName name email")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return NextResponse.json(notes);
+  } catch (error) {
+    console.error("[GET /api/journal-notes]", error);
+    return NextResponse.json(
+      { message: "Internal server error." },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const { customerId, title, content } = await req.json();
@@ -24,18 +48,20 @@ export async function POST(req: Request) {
     });
 
     await ActivityLog.create({
-    customerId,
-    type: "Journal Note",
-    description: `Journal note added: ${title}`,
-    createdBy: "Admin",
+      customerId,
+      type: "journal_note",
+      description: `New journal entry: "${title.trim()}"`,
     });
 
-    return NextResponse.json(note, { status: 201 });
-  } catch (error) {
-    console.error("Create note error:", error);
+    const populatedNote = await JournalNote.findById(note._id)
+      .populate("customerId", "fullName name email")
+      .lean();
 
+    return NextResponse.json(populatedNote, { status: 201 });
+  } catch (error) {
+    console.error("[POST /api/journal-notes]", error);
     return NextResponse.json(
-      { message: "Failed to create journal note. Please try again." },
+      { message: "Internal server error." },
       { status: 500 }
     );
   }
