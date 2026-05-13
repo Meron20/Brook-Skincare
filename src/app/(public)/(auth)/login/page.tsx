@@ -8,8 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, useSession} from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+
 
 // ── SCHEMAS ──
 const loginSchema = z.object({
@@ -31,8 +33,9 @@ type LoginFormData = z.infer<typeof loginSchema>;
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
-  const router = useRouter();
+
   const { data: session, update } = useSession();
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +53,7 @@ export default function AuthPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
-const searchParams = useSearchParams();
-const redirectPath = searchParams.get("redirect") || "/services";
+
   // ── REGISTER FORM ──
   const {
     register: registerSignup,
@@ -70,7 +72,6 @@ const redirectPath = searchParams.get("redirect") || "/services";
     resetRegister();
   };
 
-  // ── LOGIN SUBMIT ──
   const onLoginSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setServerError("");
@@ -90,7 +91,6 @@ const redirectPath = searchParams.get("redirect") || "/services";
   
       setServerSuccess("Welcome back! Redirecting...");
   
-     
       const fresh = await update();
 
       if (fresh?.user?.role === "admin") {
@@ -138,9 +138,7 @@ const redirectPath = searchParams.get("redirect") || "/services";
         setServerSuccess("Account created! Please sign in with your new account.");
       }, 1000);
 
-      setTimeout(() => {
-  router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
-}, 1000);
+      setTimeout(() => router.push("/login"), 1000);
 
     } catch {
       setServerError("Server error. Please try again later.");
