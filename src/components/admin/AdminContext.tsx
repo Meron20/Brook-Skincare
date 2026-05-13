@@ -11,6 +11,7 @@ const routeTitles: Record<string, { title: string; subtitle: string }> = {
   "/admin/customers/[id]": { title: "Customers", subtitle: "View profile, bookings, journal notes, and activity"},
   "/admin/bookings": { title: "Bookings", subtitle: "View and manage appointments" },
   "/admin/journal": { title: "Journal", subtitle: "Patient journal entries" },
+  "/admin/learn": { title: "Learn", subtitle: "Manage articles and FAQ content" },
   "/admin/history": { title: "History", subtitle: "Past consultations and records" },
   "/admin/settings": { title: "Settings", subtitle: "Configure your clinic settings" },
 };

@@ -83,10 +83,9 @@ export default function MarqueeSection() {
         >
           {/* Our Services label */}
           <span
-            className="flex-shrink-0 font-semibold uppercase tracking-widest mr-4 px-4 py-1.5 rounded-full"
+            className="flex-shrink-0 font-semibold uppercase tracking-widest mr-4 px-4 py-1.5 rounded-full text-xs"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "11px",
               color: "#0A1F14",
               background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
               letterSpacing: "2px",
@@ -97,11 +96,10 @@ export default function MarqueeSection() {
           <Separator />
 
           {items.map((service, i) => (
-            <span key={i} className="flex items-center flex-shrink-0">
+            <span key={i} className="flex items-center flex-shrink-0 text-sm">
               <span
                 className="flex-shrink-0 font-medium"
                 style={{
-                  fontSize: "13px",
                   color: i % 3 === 0
                     ? "#C9A84C"
                     : i % 3 === 1

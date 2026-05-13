@@ -177,7 +177,7 @@ const footerLinks = {
 
             {/* Brand name */}
             <p
-              className="font-bold mb-1"
+              className="font-bold mb-1 text-2xl"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: "24px",
@@ -276,10 +276,9 @@ const footerLinks = {
             {/* LEFT — Title + Subtitle */}
             <div className="flex-shrink-0">
               <p
-                className="font-semibold mb-1"
+                className="font-semibold mb-1 text-xl"
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "20px",
                   color: "white",
                 }}
               >
@@ -390,6 +389,17 @@ const footerLinks = {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/login"
+              className="text-xs transition-colors"
+              style={{ color: "rgba(255,255,255,0.15)" }}
+              onMouseEnter={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+              onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.15)"}
+            >
+              Admin
+            </Link>
+
+
           </div>
         </div>
       </div>

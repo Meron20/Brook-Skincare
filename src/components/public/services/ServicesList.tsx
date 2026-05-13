@@ -249,7 +249,7 @@ export default function ServicesList() {
                   {/* Book button */}
                   <div className="col-span-12 md:col-span-1 flex md:justify-end">
                     <Link
-                      href={`/login?redirect=/client-journal&service=${service._id}`}
+                      href="/booking/slot"
                       className="flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-xs transition-all hover:-translate-y-0.5 hover:shadow-lg w-fit"
                       style={{
                         background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
@@ -294,7 +294,7 @@ export default function ServicesList() {
               {services.length} service{services.length !== 1 ? "s" : ""} available
             </p>
             <p
-              className="text-xs"
+              className="text-xs "
               style={{ color: "rgba(10,31,20,0.35)" }}
             >
               🌍 Online consultations · Available worldwide

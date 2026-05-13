@@ -126,17 +126,17 @@ export default function ServicesCTA() {
             {/* COLUMN 3 — CTAs */}
             <div className="flex flex-col items-center  gap-3">
               <Link
-                href="/login?redirect=/client-journal"
+                href="/booking/slot"
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-xs transition-all hover:-translate-y-0.5 w-full md:w-auto justify-center"
                 style={{
-                  background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
-                  color: "#0A1F14",
-                  boxShadow: "0 4px 20px rgba(201,168,76,0.35)",
+                    background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
+                    color: "#0A1F14",
+                    boxShadow: "0 4px 20px rgba(201,168,76,0.35)",
                 }}
-              >
-                Book Your Consultation
+                >
+                 Book Your Consultation
                 <ArrowRight size={15} />
-              </Link>
+            </Link>
                <a
               
                 href="https://www.youtube.com/channel/UCQqGytMj-iIbDnqlyTfn7vw"

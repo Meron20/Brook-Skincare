@@ -167,45 +167,42 @@ export default function TestimonialsSection() {
             <ChevronLeft size={20} style={{ color: "#9A7A2E" }} />
           </button>
 
+         
           {/* Cards container */}
-          {/* Cards container */}
-<div className="flex items-center justify-center gap-4 w-full px-0 md:px-16">
-  {getVisibleCards().map(({ testimonial: t, position }) => {
-    const isCenter = position === 0;
-    const isLeft = position === -1;
-    const isRight = position === 1;
+            <div className="flex items-center justify-center gap-4 w-full px-0 md:px-16">
+              {getVisibleCards().map(({ testimonial: t, position }) => {
+                const isCenter = position === 0;
+                const isLeft = position === -1;
+                const isRight = position === 1;
 
-    return (
-      <div
-        key={t.id}
-        onClick={() => !isCenter && setActive(testimonials.indexOf(t))}
-        className={`relative transition-all duration-500 flex-shrink-0 ${
-          !isCenter ? "hidden md:block" : "block"
-        }`}
-        style={{
-          width: isCenter ? "380px" : "260px",
-          opacity: isCenter ? 1 : 0.55,
-          transform: isCenter
-            ? "scale(1) translateY(0)"
-            : "scale(0.88) translateY(16px)",
-          cursor: isCenter ? "default" : "pointer",
-          zIndex: isCenter ? 10 : 1,
-        }}
-      >
-               <style>{`
-                    @media (min-width: 768px) {
-                      .side-card-${t.id} { display: block !important; }
-                    }
-                  `}</style>
+                return (
+                  <div
+                    key={t.id}
+                    onClick={() => !isCenter && setActive(testimonials.indexOf(t))}
+                    className={`relative transition-all duration-500 flex-shrink-0 ${
+                      !isCenter ? "hidden md:block" : "block"
+                    }`}
+                    style={{
+                      width: isCenter ? "380px" : "260px",
+                      opacity: isCenter ? 1 : 0.55,
+                      transform: isCenter
+                        ? "scale(1) translateY(0)"
+                        : "scale(0.88) translateY(16px)",
+                      cursor: isCenter ? "default" : "pointer",
+                      zIndex: isCenter ? 10 : 1,
+                    }}
+                  >
+                  <style>{`
+                        @media (min-width: 768px) {
+                          .side-card-${t.id} { display: block !important; }
+                             }
+                     `}</style>
                   <div className={`${!isCenter ? `side-card-${t.id}` : ""}`}>
-
-                
-                   
                 {/* Card wrapper — stacked effect */}
                     <div className="relative" style={{ marginTop: "30px" }}>
 
                         {/* ── BACK CARD (dark, peeking behind right side) ── */}
-                        <div
+                    <div
                         className="absolute"
                         style={{
                             top: "10px",
@@ -294,10 +291,9 @@ export default function TestimonialsSection() {
 
                         {/* ── QUOTE TEXT ── */}
                         <p
-                            className="text-center leading-relaxed"
+                            className={`text-center leading-relaxed ${isCenter ? "text-sm" : "text-xs"}`}
                             style={{
                             color: "rgba(10,31,20,0.65)",
-                            fontSize: isCenter ? "13px" : "11px",
                             lineHeight: 1.8,
                             display: "-webkit-box",
                             WebkitLineClamp: isCenter ? 6 : 5,

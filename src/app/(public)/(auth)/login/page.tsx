@@ -94,7 +94,7 @@ const redirectPath = searchParams.get("redirect") || "/services";
         if (session?.user?.role === "admin") {
           router.push("/admin");
         } else {
-          router.push(redirectPath);
+          router.push("/booking/slot");
         }
       }, 1000);
 
@@ -183,7 +183,7 @@ const redirectPath = searchParams.get("redirect") || "/services";
           {/* ── PILL TOGGLE ── */}
           <div
             className="flex rounded-full p-1 mb-6 w-fit"
-            style={{ backgroundColor: "#2a1f5e" }}
+            style={{ backgroundColor: "#0A1F14"}}
           >
             {(["login", "register"] as const).map((tab) => (
               <button
@@ -312,7 +312,7 @@ const redirectPath = searchParams.get("redirect") || "/services";
 
               <Button type="submit" disabled={isLoading}
                 className="w-full py-3 rounded-xl text-sm font-semibold mt-1 hover:opacity-90"
-                style={{ backgroundColor: "#1E1548", color: "white" }}>
+                style={{ backgroundColor: "#0A1F14", color: "white" }}>
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
@@ -398,7 +398,7 @@ const redirectPath = searchParams.get("redirect") || "/services";
 
               <Button type="submit" disabled={isLoading}
                 className="w-full py-3 rounded-xl text-sm font-semibold mt-1 hover:opacity-90"
-                style={{ backgroundColor: "#1E1548" , color: "white" }}>
+                style={{ backgroundColor: "#0A1F14" , color: "white" }}>
                 {isLoading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
@@ -406,38 +406,83 @@ const redirectPath = searchParams.get("redirect") || "/services";
         </div>
 
         {/* ── RIGHT — IMAGE SIDE ── */}
-        <div className="hidden md:block md:w-1/2 relative">
-          <Image
-            src="/login.png"
-            alt="Brook Skincare"
-            fill
-            sizes="50vw"
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0"
-            style={{ background: "linear-gradient(to top, rgba(30,21,72,0.85) 0%, rgba(30,21,72,0.2) 60%, transparent 100%)" }}
-          />
-          <div className="absolute bottom-8 left-6 right-6 z-10">
-            <p className="text-lg font-semibold text-white mb-1"
-              style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
-              Your skin deserves expert care
-            </p>
-            <p className="text-sm text-gray-300">
-              Personalized consultations with a licensed skincare specialist,
-              wherever you are in the world.
-            </p>
-          </div>
+        <div className="hidden md:block md:w-1/2 relative p-6 ">
+
+          <div
+              className="absolute inset-0 p-8"
+              style={{ background: "linear-gradient(135deg, #0A1F14, #1A3D2B)" }}
+            />
+
+            {/* Gold top line */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[4px]"
+              style={{
+                background: "linear-gradient(90deg, transparent, #C9A84C, transparent)",
+              }}
+            />
+             <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.08) 0%, transparent 60%)",
+              }}
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-10 text-center gap-8">
+
+            {/* Logo */}
+            <div
+              className="w-24 h-24 rounded-full overflow-hidden"
+              style={{ border: "2px solid rgba(201,168,76,0.4)" }}
+            >
+              <Image
+                src="/brook-logo.jpeg"
+                alt="Brook Skincare"
+                width={96}
+                height={96}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+            <div
+              className="w-58 rounded-2xl overflow-hidden shadow-2xl "
+              style={{ border: "1px solid rgba(201,168,76,0.3)" }}
+            >
+              <Image
+                src="/brook-book.jpeg"
+                alt="Brook Skin Guide"
+                width={192}
+                height={260}
+                className="w-full object-cover mr-6"
+                priority
+              />
+            </div>
+
+            {/* <div
+              className="absolute inset-0"
+              style={{
+                background: "linear-gradient(to top, rgba(10,31,20,0.95) 0%, rgba(10,31,20,0.4) 60%, transparent 100%)",
+              }}
+            /> */}
+            <div>
+              <p
+                className="font-semibold text-white mb-2"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "22px",
+                }}
+              >
+                Your skin deserves expert care
+              </p>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "rgba(255,255,255,0.5)" }}
+              >
+                Personalised consultations with a licensed nurse
+                and melasma specialist — wherever you are in the world.
+              </p>
+            </div>
         </div>
       </div>
-
-      {/* ── FOOTER NOTE ── */}
-      <p className="text-xs text-gray-600 mt-8 text-center">
-        By continuing, you agree to Brook Skincare&apos;s{" "}
-        <Link href="/terms" className="hover:underline" style={{ color: "#C9A96E" }}>Terms of Service</Link>{" "}
-        and{" "}
-        <Link href="/privacy" className="hover:underline" style={{ color: "#C9A96E" }}>Privacy Policy</Link>
-      </p>
     </div>
+  </div>
   );
 }
