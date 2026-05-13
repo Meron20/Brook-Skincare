@@ -251,12 +251,18 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
         {searchOpen && searchQuery.trim().length >= 3 && (
           <div
             className="absolute top-full right-0 mt-2 w-80 rounded-2xl overflow-hidden shadow-2xl z-50"
-            style={{ background: gradient.card, border: `1px solid ${border.light}`, boxShadow: shadow.strong }}
+            style={{
+              background: gradient.card,
+              border: `1px solid ${border.light}`,
+              boxShadow: shadow.strong,
+            }}
           >
             {isSearching ? (
               <div className="flex items-center justify-center gap-3 py-6">
-                <div className="w-4 h-4 rounded-full border-2 animate-spin"
-                  style={{ borderColor: palette.gold, borderTopColor: "transparent" }} />
+                <div
+                  className="w-4 h-4 rounded-full border-2 animate-spin"
+                  style={{ borderColor: palette.gold, borderTopColor: "transparent" }}
+                />
                 <p className="text-sm text-gray-500">Searching...</p>
               </div>
             ) : results.length > 0 ? (
@@ -268,19 +274,27 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                     <div key={type}>
                       <div className="flex items-center gap-2 px-4 pt-3 pb-1">
                         <Icon size={12} style={{ color: config.color }} />
-                        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: config.color }}>
+                        <p className="text-xs font-semibold uppercase tracking-wider"
+                          style={{ color: config.color }}>
                           {config.label}
                         </p>
-                        <span className="text-xs px-1.5 py-0.5 rounded-full"
-                          style={{ backgroundColor: `${config.color}20`, color: config.color }}>
+                        <span
+                          className="text-xs px-1.5 py-0.5 rounded-full"
+                          style={{ backgroundColor: `${config.color}20`, color: config.color }}
+                        >
                           {items.length}
                         </span>
                       </div>
                       {items.map(result => (
-                        <button key={String(result.id)} onClick={() => handleResultClick(result.href)}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all hover:bg-white/5">
-                          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                            style={{ backgroundColor: `${config.color}15` }}>
+                        <button
+                          key={String(result.id)}
+                          onClick={() => handleResultClick(result.href)}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all hover:bg-white/5"
+                        >
+                          <div
+                            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: `${config.color}15` }}
+                          >
                             <Icon size={13} style={{ color: config.color }} />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -311,9 +325,13 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
         {/* Hint < 3 chars */}
         {searchOpen && searchQuery.trim().length > 0 && searchQuery.trim().length < 3 && (
-          <div className="absolute top-full right-0 mt-2 w-80 rounded-2xl px-4 py-3 shadow-2xl z-50"
-            style={{ background: gradient.card, border: `1px solid ${border.light}` }}>
-            <p className="text-xs text-gray-500 text-center">Type at least 3 characters to search...</p>
+          <div
+            className="absolute top-full right-0 mt-2 w-80 rounded-2xl px-4 py-3 shadow-2xl z-50"
+            style={{ background: gradient.card, border: `1px solid ${border.light}` }}
+          >
+            <p className="text-xs text-gray-500 text-center">
+              Type at least 3 characters to search...
+            </p>
           </div>
         )}
       </div>
@@ -332,7 +350,11 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
             {unreadCount > 0 && (
               <span
                 className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold"
-                style={{ backgroundColor: "#dc2626", color: "white", border: `2px solid ${palette.bg0}` }}
+                style={{
+                  backgroundColor: "#dc2626",
+                  color: "white",
+                  border: `2px solid ${palette.bg0}`,
+                }}
               >
                 {unreadCount > 9 ? "9+" : unreadCount}
               </span>
@@ -342,7 +364,11 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           {notificationsOpen && (
             <div
               className="absolute right-0 top-12 w-80 rounded-2xl p-4 z-50"
-              style={{ background: gradient.card, border: `1px solid ${border.light}`, boxShadow: shadow.strong }}
+              style={{
+                background: gradient.card,
+                border: `1px solid ${border.light}`,
+                boxShadow: shadow.strong,
+              }}
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
@@ -352,10 +378,12 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                   <p className="text-xs" style={{ color: text.muted }}>{unreadCount} unread</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={markAllAsRead} className="text-xs font-semibold" style={{ color: palette.gold }}>
+                  <button onClick={markAllAsRead} className="text-xs font-semibold"
+                    style={{ color: palette.gold }}>
                     Mark read
                   </button>
-                  <button onClick={markAllAsUnread} className="text-xs font-semibold" style={{ color: text.muted }}>
+                  <button onClick={markAllAsUnread} className="text-xs font-semibold"
+                    style={{ color: text.muted }}>
                     Unread
                   </button>
                 </div>
