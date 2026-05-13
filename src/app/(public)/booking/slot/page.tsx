@@ -83,7 +83,7 @@ export default function SlotPage() {
     // Save selection to sessionStorage for next step
     sessionStorage.setItem("booking_date", selectedDate);
     sessionStorage.setItem("booking_slot", JSON.stringify(selectedSlot));
-    router.push("/booking/form");
+    router.push("/client-journal");
   };
 
   const calendarDays = getCalendarDays();
@@ -236,7 +236,7 @@ export default function SlotPage() {
                         color: isSelected
                           ? "white"
                           : isPast
-                          ? "rgba(10,31,20,0.70"
+                          ? "rgba(10,31,20,0.70)"
                           : !hasSlots
                           ? "rgba(10,31,20,0.6)"
                           : "#0A1F14",
