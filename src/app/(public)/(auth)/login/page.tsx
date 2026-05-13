@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // ── SCHEMAS ──
@@ -32,6 +32,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
   const router = useRouter();
+  const { data: session, update } = useSession();
+
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -73,31 +75,30 @@ const redirectPath = searchParams.get("redirect") || "/services";
     setIsLoading(true);
     setServerError("");
     setServerSuccess("");
-
+  
     try {
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
       });
-
+  
       if (result?.error) {
         setServerError("Invalid email or password. Please try again.");
         return;
       }
-
+  
       setServerSuccess("Welcome back! Redirecting...");
-      const res = await fetch("/api/auth/session");
-       const session = await res.json();
+  
+     
+      const fresh = await update();
 
-      setTimeout(() => {
-        if (session?.user?.role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push("/booking/slot");
-        }
-      }, 1000);
-
+      if (fresh?.user?.role === "admin") {
+        router.replace("/admin");
+      } else {
+        router.replace("/booking/slot");
+      }
+  
     } catch {
       setServerError("Something went wrong. Please try again.");
     } finally {
