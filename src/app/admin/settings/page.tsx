@@ -209,7 +209,7 @@ export default function SettingsPage() {
               onClick={() => { setActiveTab(key); setError(""); setSuccess(""); }}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-200"
               style={{
-                background: activeTab === key ?  "linear-gradient(135deg, #C9A96E, #1E1548)" : "transparent",
+                background: activeTab === key ? "linear-gradient(135deg, #C9A84C, #0A1F14)" : "transparent",
                 color: activeTab === key ? "white" : "#9ca3af",
                 boxShadow: activeTab === key ? "0 1px 4px rgba(30,21,72,0.1)" : "none",
               }}
@@ -228,7 +228,7 @@ export default function SettingsPage() {
           {/* Card header */}
           <div
             className="px-6 py-5 flex items-center gap-3"
-            style={{ background: "linear-gradient(135deg, #C9A96E, #1E1548)" }}
+            style={{ background: "linear-gradient(135deg, #C9A84C, #0A1F14)" }}
           >
 
             <div
@@ -491,7 +491,7 @@ export default function SettingsPage() {
               onClick={handleSave}
               disabled={isSaving}
               className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold"
-              style={{ background: "linear-gradient(135deg, #C9A96E, #1E1548)", color: "white" }}
+              style={{ background:"linear-gradient(135deg, #C9A84C, #0A1F14)", color: "white" }}
             >
               {isSaving ? (
                 <><Loader2 size={15} className="animate-spin" />Saving...</>

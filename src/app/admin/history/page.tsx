@@ -6,6 +6,7 @@ import {
   LayoutList, AlignJustify, Loader2,
   User, Clock, CheckCircle, XCircle,
 } from "lucide-react";
+import { gradient, palette } from "@/lib/theme";
 
 type HistoryItem = {
   id: string;
@@ -110,7 +111,7 @@ export default function HistoryPage() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
               style={{
                 background: filter === key
-                  ? "linear-gradient(135deg, #C9A96E, #1E1548)"
+                  ? "linear-gradient(135deg, #C9A84C, #0A1F14)"
                   : "transparent",
                 color: filter === key ? "white" : "#9ca3af",
               }}
@@ -138,7 +139,7 @@ export default function HistoryPage() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
               style={{
                 background: viewMode === mode
-                  ? "linear-gradient(135deg, #C9A96E, #1E1548)"
+                  ? "linear-gradient(135deg, #C9A84C, #0A1F14)"
                   : "transparent",
                 color: viewMode === mode ? "white" : "#9ca3af",
               }}
@@ -322,15 +323,14 @@ export default function HistoryPage() {
           <div
             className="grid grid-cols-12 px-6 py-4 text-xs font-semibold uppercase tracking-wider"
             style={{
-              background: "linear-gradient(135deg, #1E1548, #2a1f5e)",
-              color: "#C9A96E",
-            }}
+               background: gradient.sidebar, color: palette.gold ,
+            }} 
           >
             <div className="col-span-1">Type</div>
             <div className="col-span-3">Title</div>
             <div className="col-span-3 hidden md:block">Customer</div>
             <div className="col-span-2 hidden md:block">Details</div>
-            <div className="col-span-2 text-center">Status</div>
+            <div className="col-span-4 md:col-span-2 text-center">Status</div>
             <div className="col-span-1 text-right">Time</div>
           </div>
 
@@ -375,7 +375,7 @@ export default function HistoryPage() {
                   <div className="col-span-3 hidden md:flex items-center gap-2">
                     <div
                       className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                      style={{ background: "linear-gradient(135deg, #C9A96E, #1E1548)" }}
+                      style={{ background: "linear-gradient(135deg, #C9A84C, #0A1F14)" }}
                     >
                       {item.customer.charAt(0).toUpperCase()}
                     </div>
@@ -391,7 +391,7 @@ export default function HistoryPage() {
                   </div>
 
                   {/* Status */}
-                  <div className="col-span-2 flex justify-center">
+                  <div className="col-span-4 md:col-span-2 flex justify-center">
                     <span
                       className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium"
                       style={{ backgroundColor: status.bg, color: status.color }}

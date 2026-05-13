@@ -15,6 +15,7 @@ import {
   Settings,
   GraduationCap,
   LogOut,
+  ExternalLink,
   X,
 } from "lucide-react";
 import { border, palette, gradient, shadow } from "@/lib/theme";
@@ -51,15 +52,18 @@ export default function AdminSidebar({
           onClick={() => isMobile && setMobileOpen(false)}
         >
           <div className="flex-shrink-0">
-            <Image
-              src="/brook-logo.jpeg"
-              alt="Brook Skincare"
-              width={170}
-              height={70}
-              className="rounded-lg object-contain"
-              style={{ minWidth: "40px" }}
-            />
-          </div>
+              <Image
+                src="/brook-logo.jpeg"
+                alt="Brook Skincare"
+                width={60}
+                height={60}
+                className="rounded-full object-cover"
+                style={{
+                  border: "2px solid rgba(201,169,110,0.4)",
+                  minWidth: "60px",
+                }}
+              />
+            </div>
 
           <div
             className={
@@ -143,6 +147,38 @@ export default function AdminSidebar({
         className="mx-4 my-4"
         style={{ height: "1px", backgroundColor: "rgba(201,169,110,0.2)" }}
       />
+       <div
+            className="mx-4 my-4"
+            style={{ height: "1px", backgroundColor: "rgba(201,169,110,0.15)" }}
+            />
+
+            <div className="px-3 mb-2">
+              <a
+            
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group/site overflow-hidden relative"
+               >
+                <div
+                className="absolute inset-0 opacity-0 group-hover/site:opacity-100 transition-opacity duration-200 rounded-xl"
+                style={{ backgroundColor: "rgba(201,169,110,0.08)" }}
+                />
+                <div className="relative flex-shrink-0">
+                <ExternalLink size={20} style={{ color: "#C9A96E" }} />
+                </div>
+                <span
+                className={`relative whitespace-nowrap text-sm font-medium transition-all duration-300 ${
+                    isMobile ? "block" : "overflow-hidden opacity-0 group-hover:opacity-100"
+                }`}
+                style={{ color: "#C9A96E", transitionDelay: "60ms" }}
+                >
+                View Site
+                </span>
+            </a>
+        </div>
+
+
 
       <div className="px-3">
         <button
