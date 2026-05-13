@@ -52,7 +52,7 @@ export default function AdminSidebar({
         >
           <div className="flex-shrink-0">
             <Image
-              src="/logo.png"
+              src="/brook-logo.jpeg"
               alt="Brook Skincare"
               width={170}
               height={70}

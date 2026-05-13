@@ -234,7 +234,7 @@ export default function ServicesPage() {
             <div className="col-span-3 md:col-span-4">Service</div>
             <div className="hidden md:block md:col-span-3">Description</div>
             <div className="col-span-2 md:col-span-1 text-center">Price</div>
-            <div className="col-span-1 text-center">Duration</div>
+            <div className="hidden md:block md:col-span-1">Duration</div>
             <div className="col-span-1 text-center">Status</div>
             <div className="col-span-2 text-center">Actions</div>
           </div>
@@ -288,7 +288,7 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                <div className="col-span-1 text-center">
+                <div className="hidden md:block md:col-span-l min-w-0">
                   <div
                     className="flex items-center justify-center gap-1"
                     style={{ color: text.muted }}
@@ -311,7 +311,7 @@ export default function ServicesPage() {
                   </button>
                 </div>
 
-                <div className="col-span-2 flex items-center justify-center gap-2">
+                <div className="col-span-2 flex items-center justify-center mt-2 gap-2">
                   <button
                     onClick={() => openModal(service)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105"

@@ -310,7 +310,7 @@ export default function LearnPage() {
                 <div className="col-span-2 hidden md:block">Category</div>
                 <div className="col-span-2 text-center">Status</div>
                 <div className="col-span-1 text-center hidden md:block">Pinned</div>
-                <div className="col-span-2 text-center">Actions</div>
+                <div className="col-span-5  md:col-span-2 text-center">Actions</div>
               </div>
 
               {/* Table rows */}
@@ -383,14 +383,14 @@ export default function LearnPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="col-span-2 flex items-center justify-center gap-2">
+                    <div className="col-span-5 md:col-span-2 flex items-center justify-center gap-2">
                       <button
                         onClick={() => openArticleModal(article)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
                         style={{ backgroundColor: "rgba(30,21,72,0.07)", color: "#0A1F14" }}
                       >
                         <Pencil size={12} />
-                        <span className="hidden sm:block">Edit</span>
+                        <span className="hidden sm:block ">Edit</span>
                       </button>
                       <button
                         onClick={() => setDeleteConfirm({ id: article._id, type: "article" })}
@@ -458,7 +458,7 @@ export default function LearnPage() {
                 <div className="col-span-5">Question</div>
                 <div className="col-span-2 hidden md:block">Category</div>
                 <div className="col-span-2 text-center">Visible</div>
-                <div className="col-span-2 text-center">Actions</div>
+                <div className="col-span-3 md:col-span-1 text-center">Actions</div>
               </div>
 
               <div className="divide-y divide-gray-100">
@@ -518,7 +518,7 @@ export default function LearnPage() {
                     </div>
 
                     {/* Actions */}
-                    <div className="col-span-2 flex items-center justify-center gap-2">
+                    <div className="col-span-4 md:col-span-1 flex items-center justify-center gap-2">
                       <button
                         onClick={() => openFaqModal(faq)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
