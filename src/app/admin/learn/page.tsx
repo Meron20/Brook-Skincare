@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CldUploadWidget } from "next-cloudinary";
+import { bg, gradient } from "@/lib/theme";
 
 type Article = {
   _id: string;
@@ -254,7 +255,7 @@ export default function LearnPage() {
               className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200"
               style={{
                 background: activeTab === key
-                  ? "linear-gradient(135deg, #C9A84C, #0A1F14)"
+                  ? gradient.gold
                   : "transparent",
                 color: activeTab === key ? "white" : "#9ca3af",
               }}
@@ -268,7 +269,7 @@ export default function LearnPage() {
         <Button
           onClick={() => activeTab === "articles" ? openArticleModal() : openFaqModal()}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium"
-          style={{ background: "linear-gradient(135deg, #C9A84C, #0A1F14)", color: "white" }}
+          style={{ background: gradient.gold, color: "white" }}
         >
           <Plus size={15} />
           {activeTab === "articles" ? "New Article" : "New FAQ"}
@@ -566,7 +567,7 @@ export default function LearnPage() {
             {/* Header */}
             <div
               className="flex items-center justify-between px-6 py-5 flex-shrink-0"
-              style={{ background: "linear-gradient(135deg, #0A1F14, #1A3D2B)" }}
+              style={{  background: gradient.gold }}
             >
               <h2 className="text-white font-semibold text-lg">
                 {editingArticle ? "Edit Article" : "New Article"}
@@ -727,7 +728,10 @@ export default function LearnPage() {
                 onClick={saveArticle}
                 disabled={isSaving}
                 className="flex-1 py-3 rounded-xl text-sm font-semibold"
-                style={{ background: "linear-gradient(135deg, #C9A84C, #0A1F14)", color: "white" }}
+                style={{
+                    background: gradient.gold,
+                    color: bg.page,
+                  }}
               >
                 {isSaving ? <Loader2 size={16} className="animate-spin mx-auto" /> : editingArticle ? "Save Changes" : "Publish Article"}
               </Button>
@@ -744,7 +748,7 @@ export default function LearnPage() {
           <div className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl bg-white">
             <div
               className="flex items-center justify-between px-6 py-5"
-              style={{ background: "linear-gradient(135deg, #0A1F14, #1A3D2B)" }}
+              style={{ background: gradient.gold, }}
             >
               <h2 className="text-white font-semibold text-lg">
                 {editingFaq ? "Edit FAQ" : "New FAQ"}
@@ -823,7 +827,7 @@ export default function LearnPage() {
                 onClick={saveFaq}
                 disabled={isSaving}
                 className="flex-1 py-3 rounded-xl text-sm font-semibold"
-                style={{ background: "linear-gradient(135deg, #C9A84C, #0A1F14)", color: "white" }}
+                style={{ background: gradient.gold, color: "white" }}
               >
                 {isSaving ? <Loader2 size={16} className="animate-spin mx-auto" /> : editingFaq ? "Save Changes" : "Add FAQ"}
               </Button>

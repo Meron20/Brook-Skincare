@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { ChevronLeft, ChevronRight, Clock, ArrowRight } from "lucide-react";
 import BookingProgress from "@/components/public/booking/BookingProgress";
 
@@ -26,7 +27,9 @@ const formatDate = (d: Date) =>
 const today = formatDate(new Date());
 
 export default function SlotPage() {
+  const { status } = useSession();
   const router = useRouter();
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
@@ -43,6 +46,13 @@ export default function SlotPage() {
       })
       .catch(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (status === "unauthenticated") router.replace("/login");
+  }, [status, router]);
+
+  if (status === "loading") return null; // or a spinner
+
 
   // Get calendar days for current month
   const getCalendarDays = () => {

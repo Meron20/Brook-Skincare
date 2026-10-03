@@ -90,17 +90,15 @@ export default function AuthPage() {
       }
   
       setServerSuccess("Welcome back! Redirecting...");
-  
+
       const fresh = await update();
 
-      if (fresh?.user?.role === "admin") {
-        router.replace("/admin");
-      } else {
-        router.replace("/booking/slot");
-      }
+      router.replace(fresh?.user?.role === "admin" ? "/admin" : "/booking/slot");
+      router.refresh();
   
     } catch {
       setServerError("Something went wrong. Please try again.");
+
     } finally {
       setIsLoading(false);
     }
