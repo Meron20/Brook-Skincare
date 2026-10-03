@@ -10,7 +10,7 @@ const contactSchema = z.object({
   lastName: z.string().min(2),
   email: z.string().email(),
   phone: z.string().optional(),
-  concern: z.string().min(1),
+  concern: z.string().optional(),
   message: z.string().min(10).max(500),
 });
 
@@ -37,41 +37,51 @@ export async function POST(req: Request) {
       updatedAt: new Date(),
     });
 
-    await resend.emails.send({
-      from: "Brook Skincare <onboarding@resend.dev>",
-      to: process.env.CONTACT_TO_EMAIL || "hello@brookskincare.com",
-      subject: `New contact message from ${fullName}`,
-      replyTo: data.email,
-      html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2>New Contact Message</h2>
+  const { data: emailData, error: emailError } = await resend.emails.send({
+  from: "Brook Skincare <onboarding@resend.dev>",
+  to: process.env.CONTACT_TO_EMAIL!,
+  subject: `New contact message from ${fullName}`,
+  replyTo: data.email,
+  html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2>New Contact Message</h2>
 
-          <p><strong>Name:</strong> ${fullName}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Phone:</strong> ${data.phone || "Not provided"}</p>
-          <p><strong>Concern:</strong> ${data.concern}</p>
+      <p><strong>Name:</strong> ${fullName}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      <p><strong>Phone:</strong> ${data.phone || "Not provided"}</p>
+      <p><strong>Concern:</strong> ${data.concern}</p>
 
-          <hr />
+      <hr />
 
-          <p><strong>Message:</strong></p>
-          <p>${data.message}</p>
-        </div>
-      `,
-    });
+      <p><strong>Message:</strong></p>
+      <p>${data.message}</p>
+    </div>
+  `,
+});
+
+if (emailError) {
+  console.error("Resend error:", emailError);
+  throw new Error(emailError.message);
+}
+
+console.log("Email sent:", emailData);
 
     return NextResponse.json({
       success: true,
       message: "Message saved and sent",
     });
   } catch (error) {
-    console.error("Contact API error:", error);
+  console.error("Contact API error:", error);
 
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Something went wrong",
-      },
-      { status: 400 }
-    );
-  }
+  return NextResponse.json(
+    {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong",
+    },
+    { status: 400 }
+  );
+}
 }

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertCircle,
   ArrowRight,
+  ChevronDown,
   HeartPulse,
   Loader2,
   ShieldCheck,
@@ -55,32 +56,51 @@ export default function ContactFormSection() {
   const errorClass = "mt-2 flex items-center gap-1.5 text-sm text-red-400";
 
   const onSubmit = async (data: ContactFormData) => {
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+  console.log("FORM SUBMITTED:", data);
 
-      if (!res.ok) throw new Error("Failed to send message");
+  try {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-      setToast({
-        type: "success",
-        message: "We'll get back to you within 24 hours.",
-        id: Date.now(),
-      });
+    console.log("API STATUS:", res.status);
 
-      reset();
-      setTimeout(() => setToast(null), 4000);
-    } catch {
-      setToast({
-        type: "error",
-        message: "Something went wrong. Please try again.",
-        id: Date.now(),
-      });
-      setTimeout(() => setToast(null), 4000);
+    const result = await res.json();
+
+    console.log("API RESPONSE:", result);
+
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to send message");
     }
-  };
+
+    setToast({
+      type: "success",
+      message: "We'll get back to you within 24 hours.",
+      id: Date.now(),
+    });
+
+    reset();
+
+    setTimeout(() => setToast(null), 4000);
+  } catch (error) {
+    console.error("CONTACT FORM ERROR:", error);
+
+    setToast({
+      type: "error",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.",
+      id: Date.now(),
+    });
+
+    setTimeout(() => setToast(null), 4000);
+  }
+};
 
   return (
     <>
@@ -246,6 +266,75 @@ export default function ContactFormSection() {
                   </div>
                 </div>
 
+                
+{/* Skin Concern */}
+<div>
+  <div className="relative">
+    <select
+      {...register("concern")}
+      defaultValue=""
+      className={`
+        ${inputClass}
+        appearance-none
+        cursor-pointer
+        pr-12
+        text-white/70
+      `}
+    >
+      <option value="" disabled className="bg-[#071F14] text-white/50">
+        What can we help you with?
+      </option>
+
+      <option value="Acne" className="bg-[#071F14] text-white">
+        Acne
+      </option>
+
+      <option value="Dryness" className="bg-[#071F14] text-white">
+        Dryness
+      </option>
+
+      <option value="Hyperpigmentation" className="bg-[#071F14] text-white">
+        Hyperpigmentation
+      </option>
+
+      <option value="Melasma" className="bg-[#071F14] text-white">
+        Melasma
+      </option>
+
+      <option value="Skincare routine" className="bg-[#071F14] text-white">
+        Skincare routine
+      </option>
+
+      <option value="Online consultation" className="bg-[#071F14] text-white">
+        Online consultation
+      </option>
+
+      <option value="Other" className="bg-[#071F14] text-white">
+        Other
+      </option>
+    </select>
+
+    <ChevronDown
+      size={18}
+      strokeWidth={1.8}
+      className="
+        pointer-events-none
+        absolute
+        right-5
+        top-1/2
+        -translate-y-1/2
+        text-[#C9A84C]
+      "
+    />
+  </div>
+
+  {errors.concern && (
+    <option value="">
+  Skin concern (optional)
+</option>
+  )}
+</div>
+
                 <div>
                   <textarea
                     {...register("message")}
@@ -277,6 +366,7 @@ export default function ContactFormSection() {
                 </p>
 
                 <button
+                  type="submit"
                   disabled={isSubmitting}
                   className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-4 font-semibold text-[#071F14] shadow-lg shadow-[#C9A84C]/20 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[0_0_42px_rgba(201,168,76,0.28)] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{
