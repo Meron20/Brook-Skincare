@@ -39,6 +39,7 @@ export default function ServicesList() {
       })
       .catch(() => setIsLoading(false));
   }, []);
+  
 
   return (
     <section

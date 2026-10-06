@@ -17,7 +17,7 @@ const navLinks = [
 const dropdownLinks = [
   { label: "Services", href: "/services" },
   { label: "Learn", href: "/learn" },
-  { label: "Products", href: "/products" },
+  // { label: "Products", href: "/products" },
 ];
 
 export default function Navbar() {
