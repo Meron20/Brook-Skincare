@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, BadgeDollarSign, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Service = {
   _id: string;
@@ -16,6 +17,7 @@ type Service = {
 };
 
 export default function ServicesList() {
+  const router = useRouter();
   const [services, setServices] = useState<Service[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,19 @@ export default function ServicesList() {
       .catch(() => setIsLoading(false));
   }, []);
   
+    const handleBook = (service: Service) => {
+    sessionStorage.setItem(
+      "booking_service",
+      JSON.stringify({
+        _id: service._id,
+        name: service.name,
+        price: service.price,
+        duration: service.duration,
+      })
+    );
 
+    router.push("/booking/slot");
+  };
   return (
     <section
       ref={sectionRef}
@@ -249,8 +263,8 @@ export default function ServicesList() {
 
                   {/* Book button */}
                   <div className="col-span-12 md:col-span-1 flex md:justify-end">
-                    <Link
-                      href="/booking/slot"
+                    <button
+                      onClick={() => handleBook(service)}
                       className="flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-xs transition-all hover:-translate-y-0.5 hover:shadow-lg w-fit"
                       style={{
                         background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
@@ -260,7 +274,7 @@ export default function ServicesList() {
                     >
                       Book
                       <ArrowRight size={12} />
-                    </Link>
+                    </button>
                   </div>
                 </div>
 

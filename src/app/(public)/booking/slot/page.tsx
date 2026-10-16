@@ -99,6 +99,13 @@ export default function SlotPage() {
   const calendarDays = getCalendarDays();
   const selectedDateSlots = selectedDate ? getSlotsForDate(selectedDate) : [];
 
+  const storedService = sessionStorage.getItem("booking_service");
+
+  if (storedService) {
+    const service = JSON.parse(storedService);
+    console.log(service.name);
+  }
+
   return (
     <div
       className="min-h-screen"
