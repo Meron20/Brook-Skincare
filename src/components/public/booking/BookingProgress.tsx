@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Check } from "lucide-react";
+import SelectedService from "./SelectedService";
 
 const steps = [
   { num: 1, label: "Service", href: "/services" },
-  { num: 2, label: "Time Slot", href: "/booking/slot" },
-  { num: 3, label: "Medical Form", href: "/medical-form" },
-  { num: 4, label: "Confirm", href: "/booking/confirmation" },
+  { num: 2, label: "Time Slot", href: "/booking/slot"},
+  { num: 3, label: "Medical Form", href: "/client-journal"},
+  { num: 4, label: "Confirm", href: "/booking/confirmation"},
 ];
 
 export default function BookingProgress({ currentStep }: { currentStep: number }) {
@@ -65,6 +66,7 @@ export default function BookingProgress({ currentStep }: { currentStep: number }
             );
           })}
         </div>
+         <SelectedService />
       </div>
     </div>
   );

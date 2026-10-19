@@ -1,105 +1,166 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";
+
 import { missionVision } from "./about.data";
+import SectionHeader from "../../SectionHeader";
 
 export default function MissionVisionSection() {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      { threshold: 0.15 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section
-      className="relative overflow-hidden px-4 py-20 sm:px-6 md:px-8 lg:px-12"
-      style={{ backgroundColor: "#F0F7F2" }}
+      ref={sectionRef}
+      className="relative py-24 overflow-hidden"
+      style={{ backgroundColor: "#D8EFE0" }}
     >
+      {/* Background gradients */}
       <div
-        className="pointer-events-none absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse 50% 50% at 15% 45%, rgba(201,168,76,0.06) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 40% at 85% 30%, rgba(74,144,164,0.05) 0%, transparent 50%)
+            radial-gradient(ellipse 50% 60% at 10% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 40% at 90% 30%, rgba(10,31,20,0.05) 0%, transparent 50%)
           `,
         }}
       />
 
-      <div className="relative z-10 mx-auto max-w-[1400px]">
-        <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-[#9A7A2E]">
-              Where Brook Skincare Is Heading
-            </p>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-            <h2
-              className="max-w-3xl text-[2.45rem] font-semibold leading-[1.08] tracking-tight text-[#0A1F14] sm:text-[2.9rem] lg:text-[3.4rem]"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              Clear skincare education made for{" "}
-              <span className="bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] bg-clip-text text-transparent">
-                real people
-              </span>{" "}
-              and real skin.
-            </h2>
+          {/* ── LEFT: heading + mission/vision cards ── */}
+          <div
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateX(0)" : "translateX(-40px)",
+              transition: "all 0.8s ease",
+            }}
+          >
+            <SectionHeader
+              label="Where Brook Skincare Is Heading"
+              title="Skincare education made for"
+              highlight="real skin"
+            />
 
-            <div className="mt-8 space-y-4">
+            <div className="flex flex-col gap-5 mt-8">
               {missionVision.map(({ title, text, icon: Icon }) => (
                 <div
                   key={title}
-                  className="group rounded-[1.7rem] border border-[#C9A84C]/15 bg-[#FFF7F0] p-5 shadow-sm transition-all duration-700 hover:-translate-y-1 hover:border-[#C9A84C]/50 hover:shadow-[0_0_45px_rgba(201,168,76,0.12)] sm:p-6"
+                  className="flex items-start gap-4 p-4 rounded-2xl transition-all hover:-translate-y-0.5"
+                  style={{
+                    backgroundColor: "rgba(255,255,255,0.7)",
+                    border: "1px solid rgba(201,168,76,0.15)",
+                    backdropFilter: "blur(8px)",
+                  }}
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#071F14] text-[#C9A84C]">
-                    <Icon size={23} strokeWidth={1.8} />
+                  <div
+                    className="w-10 h-10 min-w-[40px] rounded-xl flex items-center justify-center"
+                    style={{
+                      backgroundColor: "rgba(201,168,76,0.1)",
+                      border: "1px solid rgba(201,168,76,0.2)",
+                    }}
+                  >
+                    <Icon size={18} strokeWidth={1.8} style={{ color: "#9A7A2E" }} />
                   </div>
 
-                  <h3
-                    className="text-2xl font-semibold text-[#0A1F14]"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                  >
-                    {title}
-                  </h3>
-
-                  <p className="mt-3 max-w-2xl text-base leading-7 text-[#343454]/70">
-                    {text}
-                  </p>
+                  <div>
+                    <p
+                      className="font-semibold mb-1"
+                      style={{ color: "#0A1F14", fontSize: "15px" }}
+                    >
+                      {title}
+                    </p>
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: "rgba(10,31,20,0.55)" }}
+                    >
+                      {text}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="relative mx-auto min-h-[500px] w-full max-w-[500px] overflow-visible lg:max-w-none">
-            <div className="absolute right-0 top-0 h-[410px] w-full overflow-hidden rounded-[2rem] border border-[#C9A84C]/25 bg-[#071F14] shadow-2xl shadow-[#071F14]/20 sm:h-[500px] sm:rounded-[2.5rem] lg:w-[400px]">
-              <Image
-                src="/brook-book.jpeg"
-                alt="Brook Skincare"
-                fill
-                className="object-cover opacity-90 transition-transform duration-[1200ms] hover:scale-105"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071F14]/75 via-[#071F14]/10 to-transparent" />
-            </div>
-
-            <div
-              className="absolute bottom-6 left-1/2 z-20 w-[88%] -translate-x-1/2 rounded-3xl border border-[#C9A84C]/20 bg-[#071F14]/85 p-5 shadow-2xl shadow-black/25 backdrop-blur-xl transition-all duration-700 hover:-translate-y-2 hover:border-[#C9A84C]/45 hover:bg-[#071F14]/92 sm:left-0 sm:w-[340px] sm:translate-x-0 sm:p-6 lg:-left-6"
-              style={{ animation: "floatSide 5.8s ease-in-out infinite" }}
-            >
-              <Sparkles
-                className="mb-4 text-[#C9A84C]"
-                size={24}
-                strokeWidth={1.8}
-              />
-
-              <p
-                className="text-[1.75rem] font-semibold leading-tight text-white sm:text-[2rem]"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          {/* ── RIGHT: image + floating card ── */}
+          <div
+            className="flex justify-center"
+            style={{
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateX(0)" : "translateX(40px)",
+              transition: "all 0.8s ease 0.2s",
+            }}
+          >
+            <div className="relative w-full max-w-[400px]">
+          
+             {/* Image */}
+              <div
+                className="relative h-[460px] rounded-3xl overflow-hidden px-10 py-14"
+                style={{
+                  background: "linear-gradient(135deg, #0F2D1E, #0A1F14)",
+                  border: "1px solid rgba(201,168,76,0.3)",
+                  boxShadow: "0 20px 80px rgba(0,0,0,0.2)",
+                }}
               >
-                Honest. Clinical. Personal.
-              </p>
+                {/* Gold top line */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[3px]"
+                  style={{ background: "linear-gradient(90deg, #C9A84C, #E8C96A, #C9A84C)" }}
+                />
 
-              <p className="mt-3 max-w-xs text-base leading-7 text-white/62">
-                A skincare space designed to help you understand your skin, not
-                fear it.
-              </p>
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/brook-book.jpeg"
+                    alt="Brook Skincare"
+                    fill
+                    className="object-contain rounded-xl"
+                  />
+                </div>
+              </div>
+
+              {/* Floating card */}
+              <div
+                className="absolute -bottom-6 -left-6 max-w-[280px] p-5 rounded-2xl hidden sm:block"
+                style={{
+                  backgroundColor: "#0A1F14",
+                  border: "1px solid rgba(201,168,76,0.3)",
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
+                  animation: "floatSoft 5s ease-in-out infinite",
+                }}
+              >
+                <Sparkles size={18} strokeWidth={1.8} className="mb-3" style={{ color: "#C9A84C" }} />
+                <p
+                  className="text-xl font-semibold text-white mb-1"
+                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                >
+                  Honest. Clinical. Personal.
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  A skincare space designed to help you understand your skin, not fear it.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes floatSoft {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+      `}</style>
     </section>
   );
 }

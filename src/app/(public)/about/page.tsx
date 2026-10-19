@@ -1,3 +1,4 @@
+import PageHero from "../PageHero";
 import AboutCtaSection from "./component/AboutCtasection";
 import AboutHero from "./component/AboutHero";
 import AboutStatsSection from "./component/AboutStatsSection";
@@ -21,9 +22,19 @@ export default function AboutPage() {
         }
       `}</style>
 
-      <AboutHero />
+     <PageHero
+        label="About Brook"
+        title="The Nurse Who Understands"
+        highlight="Your Skin"
+        description="A registered nurse and skin therapist bringing honest, science-based skincare guidance to Ethiopian and African skin."
+        stats={[
+          { value: "45K+", label: "YouTube Community" },
+          { value: "8+", label: "Years Experience" },
+          { value: "20K+", label: "Skin Journeys" },
+        ]}
+      />
+      <AboutHero/>
       <MissionVisionSection />
-      <AboutStatsSection />
       <ExpertSection />
       <ValuesSection />
       <AboutCtaSection />
