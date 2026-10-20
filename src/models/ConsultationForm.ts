@@ -1,4 +1,8 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import mongoose, {
+  Schema,
+  models,
+  model,
+} from "mongoose";
 
 const ConsultationFormSchema = new Schema(
   {
@@ -35,6 +39,7 @@ const ConsultationFormSchema = new Schema(
     sunWorsens: String,
 
     triggers: [String],
+
     medicalHistory: String,
 
     morningRoutine: String,
@@ -53,17 +58,51 @@ const ConsultationFormSchema = new Schema(
     language: String,
     extraNotes: String,
 
+    /*
+     * Determines which questionnaire was submitted.
+     *
+     * standard = current Client Journal form
+     * melasma  = Amharic Melasma assessment
+     */
+    formType: {
+      type: String,
+      enum: ["standard", "melasma"],
+      default: "standard",
+    },
+
+    /*
+     * Additional answers that belong specifically
+     * to the Melasma assessment.
+     *
+     * Mixed lets us add the Amharic questionnaire
+     * fields without breaking the existing standard form.
+     */
+    melasmaAssessment: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+
     status: {
       type: String,
-      enum: ["submitted", "reviewed", "booked", "completed"],
+      enum: [
+        "submitted",
+        "reviewed",
+        "booked",
+        "completed",
+      ],
       default: "submitted",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 const ConsultationForm =
   models.ConsultationForm ||
-  model("ConsultationForm", ConsultationFormSchema);
+  model(
+    "ConsultationForm",
+    ConsultationFormSchema
+  );
 
 export default ConsultationForm;

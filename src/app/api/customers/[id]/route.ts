@@ -15,9 +15,18 @@ export async function GET(
 
     const { id } = await context.params;
 
-    const customer = await User.findById(id).select(
-      "_id fullName email phone skinConcern createdAt"
-    );
+    if (!id) {
+      return NextResponse.json(
+        { message: "Customer ID is required." },
+        { status: 400 }
+      );
+    }
+
+    const customer = await User.findById(id)
+      .select(
+        "_id fullName email phone skinConcern createdAt"
+      )
+      .lean();
 
     if (!customer) {
       return NextResponse.json(
@@ -26,21 +35,28 @@ export async function GET(
       );
     }
 
-    const notes = await JournalNote.find({ customerId: id }).sort({
-      createdAt: -1,
-    });
+    const [
+      notes,
+      bookings,
+      activityLogs,
+      consultationForms,
+    ] = await Promise.all([
+      JournalNote.find({ customerId: id })
+        .sort({ createdAt: -1 })
+        .lean(),
 
-    const bookings = await Booking.find({ customerId: id }).sort({
-      createdAt: -1,
-    });
+      Booking.find({ customerId: id })
+        .sort({ createdAt: -1 })
+        .lean(),
 
-    const activityLogs = await ActivityLog.find({ customerId: id }).sort({
-      createdAt: -1,
-    });
+      ActivityLog.find({ customerId: id })
+        .sort({ createdAt: -1 })
+        .lean(),
 
-    const consultationForms = await ConsultationForm.find({ userId: id }).sort({
-      createdAt: -1,
-    });
+      ConsultationForm.find({ userId: id })
+        .sort({ createdAt: -1 })
+        .lean(),
+    ]);
 
     return NextResponse.json(
       {
@@ -48,15 +64,24 @@ export async function GET(
         notes,
         bookings,
         activityLogs,
+
+        // Includes both standard consultation forms
+        // and Melasma assessments.
         consultationForms,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Get customer details error:", error);
+    console.error(
+      "Get customer details error:",
+      error
+    );
 
     return NextResponse.json(
-      { message: "Failed to fetch customer details." },
+      {
+        message:
+          "Failed to fetch customer details.",
+      },
       { status: 500 }
     );
   }
