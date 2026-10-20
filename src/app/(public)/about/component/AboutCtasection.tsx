@@ -1,40 +1,54 @@
-"use client";
-
 import Link from "next/link";
-import { Stethoscope } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import SectionHeader from "../../(shared)/SectionHeader";
+
 
 export default function AboutCtaSection() {
   return (
-    <section className="px-4 pb-16 sm:px-5 md:px-8 md:pb-24">
-      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-[#C9A84C]/20 bg-gradient-to-br from-[#071F14] to-[#0E2A1E] p-6 shadow-2xl shadow-[#071F14]/20 sm:p-8 md:rounded-[2.5rem] md:p-12">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#C9A84C]/10 blur-[90px]" />
+    <section className="py-24" style={{ backgroundColor: "#F0F7F2" }}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div
+          className="relative overflow-hidden rounded-3xl p-10 md:p-14"
+          style={{
+            background: "linear-gradient(135deg, #0F2D1E, #0A1F14)",
+            border: "1px solid rgba(201,168,76,0.3)",
+            boxShadow: "0 20px 80px rgba(0,0,0,0.2)",
+          }}
+        >
+          {/* Gold top line */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[3px]"
+            style={{ background: "linear-gradient(90deg, #C9A84C, #E8C96A, #C9A84C)" }}
+          />
 
-        <div className="relative z-10 grid gap-8 text-center md:grid-cols-[1fr_auto] md:items-center md:text-left">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
-              Personalised skincare
-            </p>
+          {/* Soft gold glow */}
+          <div
+            className="absolute -right-20 -top-20 h-72 w-72 rounded-full pointer-events-none"
+            style={{ backgroundColor: "rgba(201,168,76,0.1)", filter: "blur(90px)" }}
+          />
 
-            <h2
-              className="text-4xl font-semibold text-white md:text-5xl"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+          <div className="relative z-10 grid gap-8 text-center md:grid-cols-[1fr_auto] md:items-center md:text-left">
+            <SectionHeader
+              dark
+              label="Personalised Skincare"
+              title="Ready for"
+              highlight="Radiant Skin?"
+              description="Book your personalised skincare session today and discover your natural glow."
+            />
+
+            <Link
+              href="/services"
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl"
+              style={{
+                background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
+                color: "#0A1F14",
+                boxShadow: "0 4px 20px rgba(201,168,76,0.3)",
+              }}
             >
-              Ready for radiant skin?
-            </h2>
-
-            <p className="mx-auto mt-3 max-w-xl leading-7 text-white/62 md:mx-0">
-              Book your personalised skincare session today and discover your
-              natural glow.
-            </p>
+              Book a Consultation
+              <ArrowRight size={16} />
+            </Link>
           </div>
-
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] px-8 py-4 font-semibold text-[#071F14] shadow-xl shadow-[#C9A84C]/20 transition duration-500 hover:-translate-y-0.5 hover:shadow-[0_0_42px_rgba(201,168,76,0.24)]"
-          >
-            <Stethoscope size={20} strokeWidth={1.8} />
-            Schedule appointment
-          </Link>
         </div>
       </div>
     </section>

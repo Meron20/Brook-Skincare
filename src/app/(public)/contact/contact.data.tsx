@@ -53,21 +53,20 @@ export const stats = [
   },
 ];
 
-export const faqs = [
-  {
-    q: "What is hydration therapy?",
-    a: "Hydration therapy is a specialised skincare treatment designed to restore moisture, improve elasticity, and leave your skin glowing and refreshed.",
-  },
-  {
-    q: "Is it suitable for all skin types?",
-    a: "Yes. Each consultation is personalised based on your skin type, skin history, lifestyle, and goals.",
-  },
-  {
-    q: "How long does a consultation take?",
-    a: "Most consultations take around 30–45 minutes depending on your concerns and the level of guidance you need.",
-  },
-  {
-    q: "What results can I expect?",
-    a: "Results vary, but many clients notice improvements in hydration, clarity, texture, and overall skin confidence with consistency.",
-  },
-];
+// export const faqs = [
+//   {
+//     q: "What is hydration therapy?",
+//     a: "Hydration therapy is a specialised skincare treatment designed to restore moisture, improve elasticity, and leave your skin glowing and refreshed.",
+//   },
+//   {
+//     q: "Is it suitable for all skin types?",
+//     a: "Yes. Each consultation is personalised based on your skin type, skin history, lifestyle, and goals.",
+//   },
+//   {
+//     q: "How long does a consultation take?",
+//     a: "Most consultations take around 30–45 minutes depending on your concerns and the level of guidance you need.",
+//   },
+//   {
+//     q: "What results can I expect?",
+//     a: "Results vary, but many clients notice improvements in hydration, clarity, texture, and overall skin confidence with consistency.",
+//   },

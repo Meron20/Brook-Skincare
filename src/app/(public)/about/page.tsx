@@ -1,4 +1,4 @@
-import PageHero from "../PageHero";
+import PageHero from "../(shared)/PageHero";
 import AboutCtaSection from "./component/AboutCtasection";
 import AboutHero from "./component/AboutHero";
 import AboutStatsSection from "./component/AboutStatsSection";

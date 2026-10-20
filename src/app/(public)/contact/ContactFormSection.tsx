@@ -106,7 +106,7 @@ export default function ContactFormSection() {
     <>
       <section
         id="contact-form"
-        className="relative overflow-hidden px-4 py-24 sm:px-6 md:px-8 lg:px-12"
+        className="relative overflow-hidden py-24"
         style={{ backgroundColor: "#F0F7F2" }}
       >
         <div
@@ -119,7 +119,7 @@ export default function ContactFormSection() {
           }}
         />
 
-        <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="relative z-10 mx-auto max-w-7xl px-6">
           <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div>
               <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#9A7A2E]">
@@ -130,7 +130,7 @@ export default function ContactFormSection() {
                 className="max-w-3xl font-light leading-[1.15] text-[#0A1F14]"
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                  fontSize: "clamp(2rem, 4vw, 3.2rem)",
                 }}
               >
                 Tell us what your skin{" "}
@@ -149,13 +149,13 @@ export default function ContactFormSection() {
 
               <div className="mt-9 space-y-5">
                 <InfoCard
-                  icon={<ShieldCheck size={26} strokeWidth={1.8} />}
+                  icon={<ShieldCheck size={20} strokeWidth={1.8} />}
                   title="Secure & confidential"
                   text="Your message is treated privately and only used to understand your skin concern."
                 />
 
                 <InfoCard
-                  icon={<HeartPulse size={26} strokeWidth={1.8} />}
+                  icon={<HeartPulse size={20} strokeWidth={1.8} />}
                   title="Personalised support"
                   text="Every reply is based on your skin history, routine, lifestyle and goals."
                 />
@@ -201,7 +201,7 @@ export default function ContactFormSection() {
                 className="relative z-10 space-y-5"
               >
                 <h2
-                  className="mb-6 text-[2rem] font-semibold leading-tight text-white md:text-[2.6rem]"
+                  className="mb-6 text-2xl font-semibold leading-tight text-white "
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   Send Us a <span className="text-[#C9A84C]">Message</span>
@@ -368,7 +368,7 @@ export default function ContactFormSection() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-4 font-semibold text-[#071F14] shadow-lg shadow-[#C9A84C]/20 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[0_0_42px_rgba(201,168,76,0.28)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-4 text-sm font-semibold text-[#071F14] shadow-lg shadow-[#C9A84C]/20 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[0_0_42px_rgba(201,168,76,0.28)] disabled:cursor-not-allowed disabled:opacity-60"
                   style={{
                     background:
                       "linear-gradient(100deg, #C9A84C 0%, #E8C96A 40%, #C9A84C 60%, #E8C96A 100%)",
@@ -380,19 +380,18 @@ export default function ContactFormSection() {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 size={20} className="animate-spin" />
+                      <Loader2 size={16} className="animate-spin" />
                       Sending…
                     </>
                   ) : (
                     <>
-                      Send Message <ArrowRight size={20} strokeWidth={1.8} />
+                      Send Message <ArrowRight size={16} strokeWidth={1.8} />
                     </>
                   )}
                 </button>
 
-                <p className="flex justify-center gap-2 text-center text-sm text-white/40">
-                  <ShieldCheck size={16} strokeWidth={1.8} /> Secure &amp;
-                  confidential
+                <p className="flex justify-center gap-2 text-center text-xs text-white/40">
+                  <ShieldCheck size={14} strokeWidth={1.8} /> Secure &amp; confidential
                 </p>
               </form>
             </div>

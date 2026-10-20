@@ -1,32 +1,35 @@
-"use client";
-
-import {
-  ShieldCheck,
-  BookOpen,
-  Users,
-} from "lucide-react";
-
+import { ShieldCheck, BookOpen, Users } from "lucide-react";
 import ValueCard from "./ValueCard";
+import SectionHeader from "../../(shared)/SectionHeader";
 
 export default function ValuesSection() {
   return (
-    <section className="px-4 py-16 sm:px-5 md:px-8 md:py-24">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+    <section className="py-24" style={{ backgroundColor: "#F0F7F2" }}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="mb-14">
+          <SectionHeader
+            center
+            label="What We Stand For"
+            title="Our"
+            highlight="Values"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <ValueCard
-            icon={<ShieldCheck size={26} strokeWidth={1.8} />}
+            icon={<ShieldCheck size={20} strokeWidth={1.8} />}
             title="Safe guidance"
             text="Practical recommendations designed to protect your skin barrier and reduce confusion."
           />
 
           <ValueCard
-            icon={<BookOpen size={26} strokeWidth={1.8} />}
+            icon={<BookOpen size={20} strokeWidth={1.8} />}
             title="Education first"
             text="You learn why something works, when to use it, and what to avoid."
           />
 
           <ValueCard
-            icon={<Users size={26} strokeWidth={1.8} />}
+            icon={<Users size={20} strokeWidth={1.8} />}
             title="For our community"
             text="Made for Ethiopian and African skin concerns that are often overlooked."
           />

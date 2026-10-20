@@ -1,8 +1,8 @@
 import ContactHero from "./ContactHero";
 import ContactFormSection from "./ContactFormSection";
-import StatsSection from "./StatsSection";
 import FaqSection from "./FaqSection";
 import ContactCta from "./ContactCta";
+import PageHero from "../(shared)/PageHero";
 
 export default function ContactPage() {
   return (
@@ -34,9 +34,21 @@ export default function ContactPage() {
         }
       `}</style>
 
+      <PageHero
+        label="Get in Touch"
+        title="Contact"
+        highlight="Brook"
+        description="Have a question about your skin, a consultation or the book? Send a message and you'll get a personal reply."
+        stats={[
+          { value: "24h", label: "Response Time" },
+          { value: "3", label: "Languages" },
+          { value: "50+", label: "Countries Served" },
+        ]}
+      />
+      
       <ContactHero />
       <ContactFormSection />
-      <StatsSection />
+      {/* <StatsSection /> */}
       <FaqSection />
       <ContactCta />
     </main>

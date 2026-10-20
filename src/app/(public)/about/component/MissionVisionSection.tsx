@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Sparkles } from "lucide-react";
 
 import { missionVision } from "./about.data";
-import SectionHeader from "../../SectionHeader";
+import SectionHeader from "../../(shared)/SectionHeader";
 
 export default function MissionVisionSection() {
   const [isVisible, setIsVisible] = useState(false);

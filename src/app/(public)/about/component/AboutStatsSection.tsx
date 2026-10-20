@@ -1,36 +1,55 @@
-"use client";
-
 import { stats } from "./about.data";
 
 export default function AboutStatsSection() {
   return (
-    <section className="relative bg-[#071F14] px-4 py-16 sm:px-5 md:px-8 md:py-20">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-56 w-[680px] -translate-x-1/2 rounded-full bg-[#C9A84C]/10 blur-[110px]" />
-      </div>
+    <section
+      className="relative py-24 overflow-hidden"
+      style={{ backgroundColor: "#0A1F14" }}
+    >
+      {/* Soft gold glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 50% 50% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%)",
+        }}
+      />
 
-      <div className="relative z-10 mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-[1.75rem] border border-[#C9A84C]/15 bg-white/[0.04] p-6 text-center transition-all duration-700 hover:-translate-y-1 hover:border-[#C9A84C]/40 hover:shadow-[0_0_45px_rgba(201,168,76,0.12)] md:rounded-[2rem] md:p-7"
-          >
-            <p
-              className="text-4xl font-semibold text-[#C9A84C] md:text-5xl"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="flex flex-col items-center text-center py-8 px-6 rounded-2xl transition-all hover:-translate-y-0.5"
+              style={{
+                backgroundColor: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(201,168,76,0.15)",
+              }}
             >
-              {stat.value}
-            </p>
+              <p
+                className="font-bold mb-1"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "2rem",
+                  color: "#C9A84C",
+                }}
+              >
+                {stat.value}
+              </p>
 
-            <p className="mt-2 font-semibold text-[#F8F5EF]">
-              {stat.label}
-            </p>
+              <p className="text-sm font-medium text-white">
+                {stat.label}
+              </p>
 
-            <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-white/60">
-              {stat.text}
-            </p>
-          </div>
-        ))}
+              <p
+                className="text-xs mt-1 max-w-xs leading-relaxed"
+                style={{ color: "rgba(255,255,255,0.45)" }}
+              >
+                {stat.text}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

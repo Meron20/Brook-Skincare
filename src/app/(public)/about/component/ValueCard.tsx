@@ -1,5 +1,3 @@
-"use client";
-
 export default function ValueCard({
   icon,
   title,
@@ -10,19 +8,40 @@ export default function ValueCard({
   text: string;
 }) {
   return (
-    <div className="group rounded-[1.75rem] border border-[#C9A84C]/20 bg-[#071F14] p-6 shadow-sm transition-all duration-700 hover:-translate-y-1 hover:border-[#C9A84C]/50 hover:shadow-[0_0_45px_rgba(201,168,76,0.14)] md:rounded-[2rem] md:p-7">
-      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#C9A84C]/20 bg-[#C9A84C]/10 text-[#C9A84C] transition duration-500 group-hover:scale-105 group-hover:bg-[#C9A84C]/20">
+    <div
+      className="group relative overflow-hidden rounded-2xl p-7 transition-all hover:-translate-y-0.5 hover:shadow-xl"
+      style={{
+        background: "linear-gradient(135deg, #0F2D1E, #0A1F14)",
+        border: "1px solid rgba(201,168,76,0.2)",
+      }}
+    >
+      {/* Icon */}
+      <div
+        className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition group-hover:scale-105"
+        style={{
+          backgroundColor: "rgba(201,168,76,0.1)",
+          border: "1px solid rgba(201,168,76,0.2)",
+          color: "#C9A84C",
+        }}
+      >
         {icon}
       </div>
 
+      {/* Title */}
       <h3
-        className="text-3xl font-semibold text-white"
+        className="text-xl font-semibold text-white mb-2"
         style={{ fontFamily: "'Cormorant Garamond', serif" }}
       >
         {title}
       </h3>
 
-      <p className="mt-3 leading-7 text-white/60">{text}</p>
+      {/* Text */}
+      <p
+        className="text-sm leading-relaxed"
+        style={{ color: "rgba(255,255,255,0.55)" }}
+      >
+        {text}
+      </p>
     </div>
   );
 }

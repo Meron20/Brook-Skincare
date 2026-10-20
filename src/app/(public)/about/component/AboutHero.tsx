@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { credentials } from "./about.data";
-import SectionHeader from "../../SectionHeader";
+import SectionHeader from "../../(shared)/SectionHeader";
 
 export default function AboutStory() {
   const [isVisible, setIsVisible] = useState(false);
