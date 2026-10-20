@@ -8,6 +8,7 @@ import { contactItems } from "./contact.data";
 
 export default function ContactHero() {
   const [isVisible, setIsVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -61,9 +62,9 @@ export default function ContactHero() {
               clarity, this is a safe place to start.
             </p>
 
-            <p className="font-semibold text-[#252538]">
+            {/* <p className="font-semibold text-[#252538]">
               By a nurse. For your skin. Built for you.
-            </p>
+            </p> */}
           </div>
 
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row sm:flex-wrap lg:justify-start">
@@ -123,13 +124,14 @@ export default function ContactHero() {
                   alt="Brook Skincare"
                   fill
                   priority
-                  className="object-cover object-center opacity-90"
+                  className="object-contain object-center opacity-90"
+                  style={{ objectPosition: "center 25%" }}
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-[#071F14] via-[#071F14]/25 to-transparent" />
 
                 <div
-                  className="absolute bottom-4 left-4 right-4 rounded-3xl border border-[#C9A84C]/20 bg-[#071F14]/78 p-4 backdrop-blur-xl"
+                  className="absolute bottom-1 left-4 right-4 rounded-3xl border border-[#C9A84C]/20 bg-[#071F14]/78 p-4 backdrop-blur-xl"
                   style={{ animation: "floatSoft 5.5s ease-in-out infinite" }}
                 >
                   <Sparkles className="mb-2 text-[#C9A84C]" size={18} strokeWidth={1.8} />
@@ -155,6 +157,14 @@ export default function ContactHero() {
                     href={item.href}
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noopener noreferrer" : undefined}
+                    onClick={() => {
+                      // Only for the email card: also copy the address
+                      if (item.href.startsWith("mailto:")) {
+                        navigator.clipboard.writeText(item.text);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }
+                    }}
                     className="group block rounded-2xl border border-[#C9A84C]/15 bg-white/[0.04] p-4 transition-all duration-700 hover:-translate-y-1 hover:border-[#C9A84C]/40 hover:bg-white/[0.08] hover:shadow-[0_0_35px_rgba(201,168,76,0.12)] focus:outline-none focus:ring-4 focus:ring-[#C9A84C]/20"
                   >
                     <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-[#C9A84C]/20 bg-[#C9A84C]/10 text-[#C9A84C] transition duration-500 group-hover:scale-105 group-hover:bg-[#C9A84C]/20">
@@ -164,7 +174,7 @@ export default function ContactHero() {
                     <p className="text-sm font-semibold text-white">{item.title}</p>
 
                     <p className="mt-1 text-xs leading-relaxed text-white/45">
-                      {item.text}
+                      {item.href.startsWith("mailto:") && copied ? "Copied!" : item.text}
                     </p>
                   </a>
                 ))}

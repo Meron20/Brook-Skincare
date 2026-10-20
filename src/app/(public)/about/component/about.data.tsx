@@ -31,12 +31,12 @@ export const credentials = [
 export const missionVision = [
   {
     title: "Our Mission",
-    text: "To make science-based skincare guidance accessible, honest, and culturally aware for people with darker skin tones.",
+    text: "Brook delivers evidence-based skin education and care for melanin-rich skin, with a focus on hyperpigmentation. Led by a registered nurse and certified skin therapist, we teach in Amharic and English, offer personalised consultations, and develop formulations designed for our skin, so our community can care for their skin with knowledge instead of guesswork.",
     icon: HeartPulse,
   },
   {
     title: "Our Vision",
-    text: "To become a trusted destination for African and Ethiopian skin education, consultations, and long-term skin confidence.",
+    text: "A future where melanin-rich skin is fully understood, and every Habesha woman, wherever she lives, has access to trusted clinical skincare in her own language.",
     icon: Globe,
   },
 ];

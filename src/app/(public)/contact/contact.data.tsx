@@ -11,14 +11,14 @@ export const contactItems = [
   {
     icon: <Mail size={24} strokeWidth={1.8} />,
     title: "Email Us",
-    text: "hello@brookskincare.com",
-    href: "mailto:hello@brookskincare.com",
+    text: "brook@brookskincare.com",
+    href: "mailto:brook@brookskincare.com",
   },
   {
     icon: <MessageCircle size={24} strokeWidth={1.8} />,
     title: "WhatsApp / DM",
-    text: "+46 70 000 0000",
-    href: "https://wa.me/46700000000",
+    text: "+46 79 040 9411",
+    href: "https://wa.me/46790409411",
     external: true,
   },
   {

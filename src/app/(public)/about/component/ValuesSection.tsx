@@ -18,7 +18,7 @@ export default function ValuesSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <ValueCard
             icon={<ShieldCheck size={20} strokeWidth={1.8} />}
-            title="Safe guidance"
+            title="Safe consultation"
             text="Practical recommendations designed to protect your skin barrier and reduce confusion."
           />
 

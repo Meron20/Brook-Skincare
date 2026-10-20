@@ -182,7 +182,7 @@ export default function HeroSection() {
                   className="w-1.5 h-1.5 rounded-full animate-pulse"
                   style={{ backgroundColor: "#C9A84C" }}
                 />
-                Licensed Skincare Specialist
+                Licensed Skincare Expert
               </div>
 
               {/* Headline */}
@@ -224,7 +224,7 @@ export default function HeroSection() {
                 {[
                   { value: "500+", label: "Consultations" },
                   { value: "50+", label: "Countries" },
-                  { value: "45k+", label: "Subscribers" },
+                  { value: "47k+", label: "Subscribers" },
                   { value: "98%", label: "Satisfaction" },
                 ].map(({ value, label }) => (
                   <div key={label}>

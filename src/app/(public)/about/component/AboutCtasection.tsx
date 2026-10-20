@@ -32,7 +32,7 @@ export default function AboutCtaSection() {
               dark
               label="Personalised Skincare"
               title="Ready for"
-              highlight="Radiant Skin?"
+              highlight="Radiant and Healthy Skin?"
               description="Book your personalised skincare session today and discover your natural glow."
             />
 
