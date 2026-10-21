@@ -57,6 +57,9 @@ export default function ClientJournalPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [skinPhotos, setSkinPhotos] = useState<Record<string, string>>({});
   const [productPhotos, setProductPhotos] = useState<string[]>([]);
+  const [uploadingSkinPhoto, setUploadingSkinPhoto] = useState<string | null>(null);
+  const [isUploadingProducts, setIsUploadingProducts] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -90,24 +93,94 @@ export default function ClientJournalPage() {
     );
   };
 
-  const handleSkinPhotoUpload = (
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to upload image.");
+    }
+
+    if (!result.url) {
+      throw new Error("Upload succeeded but no image URL was returned.");
+    }
+
+    return result.url;
+  };
+
+  const handleSkinPhotoUpload = async (
     slotKey: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setSkinPhotos((prev) => ({
-      ...prev,
-      [slotKey]: URL.createObjectURL(file),
-    }));
+    setUploadError(null);
+    setUploadingSkinPhoto(slotKey);
+
+    try {
+      const imageUrl = await uploadImage(file);
+
+      setSkinPhotos((prev) => ({
+        ...prev,
+        [slotKey]: imageUrl,
+      }));
+    } catch (error) {
+      console.error("Skin photo upload failed:", error);
+      setUploadError(
+        error instanceof Error ? error.message : "Failed to upload image."
+      );
+    } finally {
+      setUploadingSkinPhoto(null);
+      event.target.value = "";
+    }
   };
 
-  const handleProductPhotosUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProductPhotosUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(event.target.files || []);
-    setProductPhotos((prev) =>
-      [...prev, ...files.map((f) => URL.createObjectURL(f))].slice(0, 8)
-    );
+    if (!files.length) return;
+
+    const availableSlots = Math.max(0, 8 - productPhotos.length);
+    const filesToUpload = files.slice(0, availableSlots);
+
+    if (!filesToUpload.length) {
+      setUploadError("You can upload a maximum of 8 product photos.");
+      event.target.value = "";
+      return;
+    }
+
+    setUploadError(null);
+    setIsUploadingProducts(true);
+
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of filesToUpload) {
+        const imageUrl = await uploadImage(file);
+        uploadedUrls.push(imageUrl);
+      }
+
+      setProductPhotos((prev) => [...prev, ...uploadedUrls].slice(0, 8));
+    } catch (error) {
+      console.error("Product photo upload failed:", error);
+      setUploadError(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload product photos."
+      );
+    } finally {
+      setIsUploadingProducts(false);
+      event.target.value = "";
+    }
   };
 
   const removeProductPhoto = (index: number) => {
@@ -123,6 +196,11 @@ export default function ClientJournalPage() {
   };
 
   const goNext = async () => {
+    if (uploadingSkinPhoto || isUploadingProducts) {
+      setUploadError("Please wait until all images have finished uploading.");
+      return;
+    }
+
     let fields: (keyof ClientJournalFormData)[] = [];
 
     if (currentStep === 1) fields = ["fullName", "email"];
@@ -144,6 +222,14 @@ export default function ClientJournalPage() {
 
   const onSubmit = async (data: ClientJournalFormData) => {
     setSubmitMessage(null);
+
+    if (uploadingSkinPhoto || isUploadingProducts) {
+      setSubmitMessage({
+        type: "error",
+        text: "Please wait until all images have finished uploading.",
+      });
+      return;
+    }
 
     try {
       const res = await fetch("/api/consultation-form", {
@@ -178,6 +264,9 @@ export default function ClientJournalPage() {
     reset();
     setSkinPhotos({});
     setProductPhotos([]);
+    setUploadingSkinPhoto(null);
+    setIsUploadingProducts(false);
+    setUploadError(null);
     setCurrentStep(1);
     setSubmitMessage(null);
   };
@@ -657,6 +746,34 @@ export default function ClientJournalPage() {
 
                   {currentStep === 5 && (
                     <div className="space-y-8">
+                      {uploadError && (
+                        <div
+                          className="rounded-xl px-5 py-4 text-sm font-medium"
+                          style={{
+                            backgroundColor: "rgba(220,38,38,0.06)",
+                            border: "1px solid rgba(220,38,38,0.2)",
+                            color: "#991b1b",
+                          }}
+                        >
+                          {uploadError}
+                        </div>
+                      )}
+
+                      {(uploadingSkinPhoto || isUploadingProducts) && (
+                        <div
+                          className="rounded-xl px-5 py-4 text-sm font-medium"
+                          style={{
+                            backgroundColor: "rgba(201,168,76,0.06)",
+                            border: "1px solid rgba(201,168,76,0.2)",
+                            color: "#9A7A2E",
+                          }}
+                        >
+                          {uploadingSkinPhoto
+                            ? "Uploading face photo..."
+                            : "Uploading product photos..."}
+                        </div>
+                      )}
+
                       <div
                         className="rounded-xl px-5 py-4"
                         style={{
@@ -685,6 +802,7 @@ export default function ClientJournalPage() {
                               subtitle={slot.subtitle}
                               icon={slot.icon}
                               photo={skinPhotos[slot.key]}
+                              isUploading={uploadingSkinPhoto === slot.key}
                               onUpload={handleSkinPhotoUpload}
                               onRemove={removeSkinPhoto}
                             />
@@ -731,8 +849,9 @@ export default function ClientJournalPage() {
                             id="productPhotos"
                             type="file"
                             multiple
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/webp"
                             onChange={handleProductPhotosUpload}
+                            disabled={isUploadingProducts || uploadingSkinPhoto !== null}
                             className="hidden"
                           />
                         </label>
@@ -853,7 +972,8 @@ export default function ClientJournalPage() {
                     <button
                       type="button"
                       onClick={goNext}
-                      className="flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:-translate-y-0.5"
+                      disabled={uploadingSkinPhoto !== null || isUploadingProducts}
+                      className="flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
                       style={{
                         background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
                         color: "white",
@@ -865,7 +985,11 @@ export default function ClientJournalPage() {
                   ) : (
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={
+                        isSubmitting ||
+                        uploadingSkinPhoto !== null ||
+                        isUploadingProducts
+                      }
                       className="flex items-center gap-2 rounded-xl px-8 py-2.5 text-sm font-bold transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
                       style={{
                         background: "linear-gradient(135deg, #C9A84C, #9A7A2E)",
@@ -937,6 +1061,7 @@ function LightPhotoSlot({
   subtitle,
   icon,
   photo,
+  isUploading,
   onUpload,
   onRemove,
 }: {
@@ -945,7 +1070,11 @@ function LightPhotoSlot({
   subtitle: string;
   icon: string;
   photo?: string;
-  onUpload: (slotKey: string, event: React.ChangeEvent<HTMLInputElement>) => void;
+  isUploading?: boolean;
+  onUpload: (
+    slotKey: string,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void | Promise<void>;
   onRemove: (slotKey: string) => void;
 }) {
   return (
@@ -959,8 +1088,9 @@ function LightPhotoSlot({
       <input
         id={`skin-photo-${slotKey}`}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         onChange={(event) => onUpload(slotKey, event)}
+        disabled={isUploading}
         className="hidden"
       />
 
@@ -995,7 +1125,11 @@ function LightPhotoSlot({
       ) : (
         <label
           htmlFor={`skin-photo-${slotKey}`}
-          className="flex h-[220px] cursor-pointer flex-col items-center justify-center text-center transition-all hover:bg-black/[0.02]"
+          className={`flex h-[220px] flex-col items-center justify-center text-center transition-all ${
+            isUploading
+              ? "cursor-wait opacity-70"
+              : "cursor-pointer hover:bg-black/[0.02]"
+          }`}
         >
           <span className="text-3xl">{icon}</span>
 
@@ -1015,7 +1149,7 @@ function LightPhotoSlot({
             }}
           >
             <Camera size={13} />
-            Upload photo
+            {isUploading ? "Uploading..." : "Upload photo"}
           </span>
         </label>
       )}

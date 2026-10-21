@@ -9,9 +9,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertCircle,
+  Camera,
   ChevronLeft,
   ChevronRight,
   Shield,
+  Upload,
+  X,
 } from "lucide-react";
 
 import BookingProgress from "@/components/public/booking/BookingProgress";
@@ -190,6 +193,21 @@ export default function MelasmaJournalPage() {
   const [submitMessage, setSubmitMessage] =
     useState<string | null>(null);
 
+  const [skinPhotos, setSkinPhotos] =
+    useState<Record<string, string>>({});
+
+  const [productPhotos, setProductPhotos] =
+    useState<string[]>([]);
+
+  const [uploadingSkinPhoto, setUploadingSkinPhoto] =
+    useState<string | null>(null);
+
+  const [isUploadingProducts, setIsUploadingProducts] =
+    useState(false);
+
+  const [uploadError, setUploadError] =
+    useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -286,6 +304,132 @@ export default function MelasmaJournalPage() {
   };
 
   // ───────────────────────────────────────────
+  // PHOTO UPLOAD
+  // ───────────────────────────────────────────
+
+  const uploadImage = async (
+    file: File
+  ): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message ||
+          "Failed to upload image."
+      );
+    }
+
+    if (!result.url) {
+      throw new Error(
+        "Upload succeeded but no image URL was returned."
+      );
+    }
+
+    return result.url;
+  };
+
+  const handleSkinPhotoUpload = async (
+    slot: string,
+    file: File
+  ) => {
+    setUploadError(null);
+    setUploadingSkinPhoto(slot);
+
+    try {
+      const url = await uploadImage(file);
+
+      setSkinPhotos((prev) => ({
+        ...prev,
+        [slot]: url,
+      }));
+    } catch (error) {
+      console.error(
+        "Melasma skin photo upload failed:",
+        error
+      );
+
+      setUploadError(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload image."
+      );
+    } finally {
+      setUploadingSkinPhoto(null);
+    }
+  };
+
+  const handleProductPhotosUpload = async (
+    files: FileList | null
+  ) => {
+    if (!files?.length) return;
+
+    setUploadError(null);
+    setIsUploadingProducts(true);
+
+    try {
+      const remaining =
+        8 - productPhotos.length;
+
+      const selectedFiles = Array.from(
+        files
+      ).slice(0, remaining);
+
+      const uploadedUrls: string[] = [];
+
+      for (const file of selectedFiles) {
+        const url = await uploadImage(file);
+        uploadedUrls.push(url);
+      }
+
+      setProductPhotos((prev) => [
+        ...prev,
+        ...uploadedUrls,
+      ]);
+    } catch (error) {
+      console.error(
+        "Melasma product photo upload failed:",
+        error
+      );
+
+      setUploadError(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload image."
+      );
+    } finally {
+      setIsUploadingProducts(false);
+    }
+  };
+
+  const removeSkinPhoto = (
+    slot: string
+  ) => {
+    setSkinPhotos((prev) => {
+      const next = { ...prev };
+      delete next[slot];
+      return next;
+    });
+  };
+
+  const removeProductPhoto = (
+    url: string
+  ) => {
+    setProductPhotos((prev) =>
+      prev.filter(
+        (photo) => photo !== url
+      )
+    );
+  };
+
+  // ───────────────────────────────────────────
   // SUBMIT
   // ───────────────────────────────────────────
 
@@ -321,6 +465,11 @@ export default function MelasmaJournalPage() {
               "Melasma assessment",
 
             language: "Amharic",
+
+            skinPhotos:
+              Object.values(skinPhotos),
+
+            productPhotos,
 
             melasmaAssessment: data,
           }),
@@ -1006,11 +1155,381 @@ export default function MelasmaJournalPage() {
                           color: "#9A7A2E",
                         }}
                       >
-                        Photo upload will be connected
-                        separately so your images are
-                        stored securely instead of as
-                        temporary browser links.
+                        JPG, PNG or WebP. Maximum 8 MB
+                        per photo.
                       </p>
+                    </div>
+
+                    {/* PHOTO UPLOAD */}
+
+                    <div className="space-y-6">
+                      {uploadError && (
+                        <div className="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                          <AlertCircle
+                            size={18}
+                            className="mt-0.5 shrink-0"
+                          />
+
+                          <span>{uploadError}</span>
+                        </div>
+                      )}
+
+                      <div>
+                        <div className="mb-4">
+                          <h3
+                            className="text-lg font-semibold"
+                            style={{
+                              color: "#0A1F14",
+                            }}
+                          >
+                            የፊት ፎቶዎች — 3 አቅጣጫዎች
+                          </h3>
+
+                          <p
+                            className="mt-1 text-sm"
+                            style={{
+                              color:
+                                "rgba(10,31,20,0.55)",
+                            }}
+                          >
+                            JPG, PNG or WebP. Maximum 8
+                            MB per photo.
+                          </p>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-3">
+                          {[
+                            {
+                              key: "front",
+                              title:
+                                "የፊት ለፊት ቀጥታ ፎቶ",
+                              subtitle:
+                                "Front Face",
+                            },
+                            {
+                              key: "left",
+                              title:
+                                "የግራ ጎን ፊት ፎቶ",
+                              subtitle:
+                                "Left Profile",
+                            },
+                            {
+                              key: "right",
+                              title:
+                                "የቀኝ ጎን ፊት ፎቶ",
+                              subtitle:
+                                "Right Profile",
+                            },
+                          ].map((slot) => {
+                            const photo =
+                              skinPhotos[
+                                slot.key
+                              ];
+
+                            const uploading =
+                              uploadingSkinPhoto ===
+                              slot.key;
+
+                            return (
+                              <div
+                                key={slot.key}
+                                className="relative overflow-hidden rounded-2xl border bg-white"
+                                style={{
+                                  borderColor:
+                                    "rgba(201,168,76,0.28)",
+                                }}
+                              >
+                                {photo ? (
+                                  <div className="relative aspect-[4/3]">
+                                    <img
+                                      src={photo}
+                                      alt={
+                                        slot.subtitle
+                                      }
+                                      className="h-full w-full object-cover"
+                                    />
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        removeSkinPhoto(
+                                          slot.key
+                                        )
+                                      }
+                                      className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-white shadow-lg"
+                                      style={{
+                                        backgroundColor:
+                                          "#0A1F14",
+                                      }}
+                                      aria-label={`Remove ${slot.subtitle}`}
+                                    >
+                                      <X
+                                        size={17}
+                                      />
+                                    </button>
+
+                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent px-4 pb-4 pt-10">
+                                      <p className="text-sm font-semibold text-white">
+                                        {
+                                          slot.title
+                                        }
+                                      </p>
+
+                                      <p className="text-xs text-white/75">
+                                        {
+                                          slot.subtitle
+                                        }
+                                      </p>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <label className="flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-3 p-5 text-center transition hover:bg-[#F0F7F2]">
+                                    <div
+                                      className="flex h-12 w-12 items-center justify-center rounded-full"
+                                      style={{
+                                        background:
+                                          "rgba(201,168,76,0.12)",
+                                        color:
+                                          "#9A7A2E",
+                                      }}
+                                    >
+                                      <Camera
+                                        size={21}
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <p
+                                        className="text-sm font-semibold"
+                                        style={{
+                                          color:
+                                            "#0A1F14",
+                                        }}
+                                      >
+                                        {
+                                          slot.title
+                                        }
+                                      </p>
+
+                                      <p
+                                        className="mt-1 text-xs"
+                                        style={{
+                                          color:
+                                            "rgba(10,31,20,0.5)",
+                                        }}
+                                      >
+                                        {uploading
+                                          ? "Uploading..."
+                                          : slot.subtitle}
+                                      </p>
+                                    </div>
+
+                                    <span
+                                      className="rounded-full px-4 py-2 text-xs font-semibold"
+                                      style={{
+                                        background:
+                                          "rgba(201,168,76,0.12)",
+                                        color:
+                                          "#9A7A2E",
+                                      }}
+                                    >
+                                      {uploading
+                                        ? "Uploading..."
+                                        : "Upload photo"}
+                                    </span>
+
+                                    <input
+                                      type="file"
+                                      accept="image/jpeg,image/png,image/webp"
+                                      className="hidden"
+                                      disabled={
+                                        uploading
+                                      }
+                                      onChange={(
+                                        event
+                                      ) => {
+                                        const file =
+                                          event
+                                            .target
+                                            .files?.[0];
+
+                                        if (file) {
+                                          void handleSkinPhotoUpload(
+                                            slot.key,
+                                            file
+                                          );
+                                        }
+
+                                        event.target.value =
+                                          "";
+                                      }}
+                                    />
+                                  </label>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* PRODUCT PHOTOS */}
+
+                      <div>
+                        <h3
+                          className="text-lg font-semibold"
+                          style={{
+                            color: "#0A1F14",
+                          }}
+                        >
+                          የሚጠቀሙባቸው የቆዳ ምርቶች
+                        </h3>
+
+                        <p
+                          className="mt-1 text-sm leading-6"
+                          style={{
+                            color:
+                              "rgba(10,31,20,0.55)",
+                          }}
+                        >
+                          አሁን የሚጠቀሙባቸውን የቆዳ
+                          ምርቶች ፎቶ መላክ ይችላሉ።
+                          Maximum 8 photos.
+                        </p>
+
+                        <label
+                          className="mt-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-8 text-center transition hover:bg-[#F0F7F2]"
+                          style={{
+                            borderColor:
+                              "rgba(201,168,76,0.4)",
+                          }}
+                        >
+                          <div
+                            className="flex h-12 w-12 items-center justify-center rounded-full"
+                            style={{
+                              background:
+                                "rgba(201,168,76,0.12)",
+                              color:
+                                "#9A7A2E",
+                            }}
+                          >
+                            <Upload
+                              size={20}
+                            />
+                          </div>
+
+                          <p
+                            className="mt-3 text-sm font-semibold"
+                            style={{
+                              color:
+                                "#0A1F14",
+                            }}
+                          >
+                            {isUploadingProducts
+                              ? "Uploading product photos..."
+                              : "Upload product photos"}
+                          </p>
+
+                          <p
+                            className="mt-1 text-xs"
+                            style={{
+                              color:
+                                "rgba(10,31,20,0.45)",
+                            }}
+                          >
+                            JPG, PNG or WebP · max 8
+                            MB each
+                          </p>
+
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            multiple
+                            className="hidden"
+                            disabled={
+                              isUploadingProducts ||
+                              productPhotos.length >=
+                                8
+                            }
+                            onChange={(
+                              event
+                            ) => {
+                              void handleProductPhotosUpload(
+                                event.target
+                                  .files
+                              );
+
+                              event.target.value =
+                                "";
+                            }}
+                          />
+                        </label>
+
+                        {productPhotos.length >
+                          0 && (
+                          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                            {productPhotos.map(
+                              (
+                                photo,
+                                index
+                              ) => (
+                                <div
+                                  key={photo}
+                                  className="relative aspect-square overflow-hidden rounded-xl border border-black/10"
+                                >
+                                  <img
+                                    src={
+                                      photo
+                                    }
+                                    alt={`Product ${
+                                      index +
+                                      1
+                                    }`}
+                                    className="h-full w-full object-cover"
+                                  />
+
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      removeProductPhoto(
+                                        photo
+                                      )
+                                    }
+                                    className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-white shadow"
+                                    style={{
+                                      backgroundColor:
+                                        "#0A1F14",
+                                    }}
+                                    aria-label="Remove product photo"
+                                  >
+                                    <X
+                                      size={
+                                        15
+                                      }
+                                    />
+                                  </button>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        )}
+
+                        {productPhotos.length >
+                          0 && (
+                          <p
+                            className="mt-3 text-xs"
+                            style={{
+                              color:
+                                "rgba(10,31,20,0.5)",
+                            }}
+                          >
+                            {
+                              productPhotos.length
+                            }{" "}
+                            of 8 product photos
+                            uploaded.
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     {/* PRIVACY */}
@@ -1125,7 +1644,11 @@ export default function MelasmaJournalPage() {
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={
+                      isSubmitting ||
+                      Boolean(uploadingSkinPhoto) ||
+                      isUploadingProducts
+                    }
                     className="rounded-full px-7 py-3 text-sm font-semibold disabled:opacity-50"
                     style={{
                       background:
@@ -1136,7 +1659,10 @@ export default function MelasmaJournalPage() {
                   >
                     {isSubmitting
                       ? "በመላክ ላይ..."
-                      : "መጠይቁን ላክ"}
+                      : uploadingSkinPhoto ||
+                          isUploadingProducts
+                        ? "ፎቶ በመጫን ላይ..."
+                        : "መጠይቁን ላክ"}
                   </button>
                 )}
               </div>
