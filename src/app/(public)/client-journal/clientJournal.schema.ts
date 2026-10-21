@@ -1,56 +1,48 @@
 import { z } from "zod";
 
-export const clientJournalSchema = z.object({
-  fullName: z.string().min(2, "Please enter your full name."),
-  email: z.string().email("Please enter a valid email address."),
+const requiredText = z.string().min(1, "እባክዎ ይህንን ጥያቄ ይመልሱ");
 
-  age: z.string(),
-  location: z.string(),
-  ethnicity: z.string(),
-  fitzpatrickType: z.string(),
+export const generalSchema = z.object({
+  // Personal information
+  fullName: requiredText,
+  country: requiredText,
+  phone: requiredText,
+  email: z.string().optional(),
 
-  mainConcern: z
-    .string()
-    .min(10, "Please describe your main skin concern in at least 10 characters."),
+  // 1. Main skin concern
+  mainConcern: requiredText,
 
-  concernDuration: z.string(),
-  sunWorsens: z.string(),
+  // 2. Products (names, photos come later)
+  productNames: z.string().optional(),
 
-  triggers: z.array(z.string()),
+  // 3. Allergies
+  allergies: requiredText,
 
-  medicalHistory: z.string(),
-  morningRoutine: z.string(),
-  eveningRoutine: z.string(),
-  previousTreatments: z.string(),
+  // 4. Skin type
+  skinType: requiredText,
 
-  goals: z
-    .string()
-    .min(10, "Please describe what you want to achieve in at least 10 characters."),
+  // 5. Daily exposure
+  dailyExposure: requiredText,
 
-  budget: z.string(),
-  language: z.string().min(1, "Please choose your preferred consultation language."),
-  extraNotes: z.string(),
+  // 6. Makeup
+  makeupUse: requiredText,
+
+  // 7. Pregnant / breastfeeding
+  pregnantOrBreastfeeding: requiredText,
 });
 
-export type ClientJournalFormData = z.infer<typeof clientJournalSchema>;
+export type GeneralFormData = z.infer<typeof generalSchema>;
 
-export const clientJournalDefaultValues: ClientJournalFormData = {
+export const generalDefaultValues: GeneralFormData = {
   fullName: "",
+  country: "",
+  phone: "",
   email: "",
-  age: "",
-  location: "",
-  ethnicity: "",
-  fitzpatrickType: "Unknown / Not sure",
   mainConcern: "",
-  concernDuration: "",
-  sunWorsens: "",
-  triggers: [],
-  medicalHistory: "",
-  morningRoutine: "",
-  eveningRoutine: "",
-  previousTreatments: "",
-  goals: "",
-  budget: "",
-  language: "English",
-  extraNotes: "",
+  productNames: "",
+  allergies: "",
+  skinType: "",
+  dailyExposure: "",
+  makeupUse: "",
+  pregnantOrBreastfeeding: "",
 };
