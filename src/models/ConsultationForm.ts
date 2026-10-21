@@ -66,7 +66,7 @@ const ConsultationFormSchema = new Schema(
      */
     formType: {
       type: String,
-      enum: ["standard", "melasma"],
+      enum: ["standard", "melasma", "general"],
       default: "standard",
     },
 
@@ -82,6 +82,11 @@ const ConsultationFormSchema = new Schema(
       default: null,
     },
 
+    generalAssessment: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+    },
+    
     status: {
       type: String,
       enum: [

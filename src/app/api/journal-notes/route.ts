@@ -4,9 +4,16 @@ import JournalNote from "@/models/JournalNote";
 import ActivityLog from "@/models/ActivityLog";
 import ConsultationForm from "@/models/ConsultationForm";
 import User from "@/models/User";
+import { auth } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
+
+    const session = await auth();
+
+      if (session?.user?.role !== "admin") {
+        return NextResponse.json({ message: "Not allowed." }, { status: 403 });
+}
     const { searchParams } = new URL(req.url);
     const customerId = searchParams.get("customerId");
 
@@ -202,6 +209,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+
+      if (session?.user?.role !== "admin") {
+        return NextResponse.json({ message: "Not allowed." }, { status: 403 });
+      }
     const {
       customerId,
       title,

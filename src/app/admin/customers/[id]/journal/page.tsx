@@ -103,11 +103,27 @@ type MelasmaAssessment = {
   currentSkinConditionOther?: string;
 };
 
+type GeneralAssessment = {
+  fullName?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+
+  mainConcern?: string;
+  productNames?: string;
+  allergies?: string;
+  skinType?: string;
+  dailyExposure?: string;
+  makeupUse?: string;
+  pregnantOrBreastfeeding?: string;
+};
+
 type ConsultationForm = {
   _id: string;
 
-  formType?: "standard" | "melasma";
-  melasmaAssessment?: MelasmaAssessment | null;
+    formType?: "standard" | "melasma" | "general";
+    melasmaAssessment?: MelasmaAssessment | null;
+    generalAssessment?: GeneralAssessment | null;
 
   fullName?: string;
   email?: string;
@@ -1509,6 +1525,11 @@ function ConsultationFormViewer({
     !!selectedForm
       ?.melasmaAssessment;
 
+  const isGeneral =
+    !isMelasma &&
+    (selectedForm?.formType === "general" ||
+      !!selectedForm?.generalAssessment);
+
   return (
     <div
       className="sticky top-6 overflow-hidden rounded-2xl"
@@ -1547,7 +1568,9 @@ function ConsultationFormViewer({
           >
             {isMelasma
               ? "Melasma Assessment"
-              : "Consultation Form"}
+              : isGeneral
+                ? "General Skin Assessment"
+                : "Consultation Form"}
           </h2>
         </div>
 
@@ -1557,12 +1580,12 @@ function ConsultationFormViewer({
             color: text.muted,
           }}
         >
-          {isMelasma
+          {isMelasma || isGeneral
             ? "Amharic pre-consultation questionnaire"
             : "Linked to customer account"}
         </p>
 
-        {isMelasma && (
+        {(isMelasma || isGeneral) && (
           <div className="mt-3 flex flex-wrap gap-2">
             <span
               className="rounded-full px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em]"
@@ -1573,7 +1596,7 @@ function ConsultationFormViewer({
                   palette.gold,
               }}
             >
-              Melasma
+              {isMelasma ? "Melasma" : "General"}
             </span>
 
             <span
@@ -1679,11 +1702,11 @@ function ConsultationFormViewer({
                         form._id
                       }
                     >
-                      {form.formType ===
-                        "melasma" ||
-                      form.melasmaAssessment
+                    {form.formType === "melasma" || form.melasmaAssessment
                         ? "Melasma Assessment"
-                        : `Consultation Form ${index + 1}`}
+                        : form.formType === "general" || form.generalAssessment
+                          ? "General Skin Assessment"
+                          : `Consultation Form ${index + 1}`}
                       {" — "}
                       {form.createdAt
                         ? new Date(
@@ -1700,17 +1723,11 @@ function ConsultationFormViewer({
 
             {selectedForm &&
               (isMelasma ? (
-                <MelasmaFormViewer
-                  form={
-                    selectedForm
-                  }
-                />
+                <MelasmaFormViewer form={selectedForm} />
+              ) : isGeneral ? (
+                <GeneralFormViewer form={selectedForm} />
               ) : (
-                <StandardFormViewer
-                  form={
-                    selectedForm
-                  }
-                />
+                <StandardFormViewer form={selectedForm} />
               ))}
           </>
         )}
@@ -2250,6 +2267,134 @@ function MelasmaFormViewer({
               form.productPhotos
             }
           />
+        </FormSection>
+      ) : null}
+    </div>
+  );
+}
+
+/* ─────────────────────────────
+   GENERAL FORM
+───────────────────────────── */
+
+function GeneralFormViewer({
+  form,
+}: {
+  form: ConsultationForm;
+}) {
+  const assessment = form.generalAssessment;
+
+  if (!assessment) {
+    return (
+      <div
+        className="rounded-xl p-4"
+        style={{
+          backgroundColor: bg.hover,
+          border: `1px solid ${border.subtle}`,
+        }}
+      >
+        <p className="text-sm font-semibold" style={{ color: text.primary }}>
+          General Skin Assessment
+        </p>
+        <p className="mt-2 text-sm leading-6" style={{ color: text.muted }}>
+          This form is marked as a general assessment, but no answers were found.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* SUMMARY */}
+      <div
+        className="rounded-xl p-4"
+        style={{
+          backgroundColor: `${palette.gold}10`,
+          border: `1px solid ${border.gold}`,
+        }}
+      >
+        <p
+          className="text-[10px] font-bold uppercase tracking-[0.2em]"
+          style={{ color: palette.gold }}
+        >
+          General Skin Assessment
+        </p>
+        <p className="mt-1 text-xs leading-5" style={{ color: text.muted }}>
+          Customer completed the Amharic general pre-consultation questionnaire.
+        </p>
+        {form.createdAt && (
+          <p className="mt-2 text-[11px]" style={{ color: text.muted }}>
+            Submitted{" "}
+            {new Date(form.createdAt).toLocaleString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+        )}
+      </div>
+
+      {/* CUSTOMER */}
+      <FormSection title="Customer Information">
+        <FormRow label="Full name" value={assessment.fullName || form.fullName} />
+        <FormRow label="Country" value={assessment.country} />
+        <FormRow label="Phone / WhatsApp / Telegram" value={assessment.phone} />
+        <FormRow label="Email" value={assessment.email || form.email} />
+      </FormSection>
+
+      {/* SKIN */}
+      <FormSection title="Skin Concern">
+        <MelasmaAnswer
+          number="1"
+          label="Main skin concern the client wants to change"
+          value={assessment.mainConcern}
+        />
+        <MelasmaAnswer
+          number="3"
+          label="Allergies or things that irritate the skin"
+          value={assessment.allergies}
+        />
+        <MelasmaAnswer
+          number="4"
+          label="Skin type"
+          value={assessment.skinType}
+        />
+      </FormSection>
+
+      {/* LIFESTYLE */}
+      <FormSection title="Lifestyle">
+        <MelasmaAnswer
+          number="5"
+          label="Daily exposure to sun, heat, dust, car or other smoke"
+          value={assessment.dailyExposure}
+        />
+        <MelasmaAnswer
+          number="6"
+          label="Makeup use"
+          value={assessment.makeupUse}
+        />
+        <MelasmaAnswer
+          number="7"
+          label="Pregnant or breastfeeding"
+          value={assessment.pregnantOrBreastfeeding}
+        />
+      </FormSection>
+
+      {/* PRODUCTS */}
+      <FormSection title="Current Products">
+        <MelasmaAnswer
+          number="2"
+          label="Creams, serums and other products used"
+          value={assessment.productNames}
+        />
+      </FormSection>
+
+      {(form.skinPhotos?.length || form.productPhotos?.length) ? (
+        <FormSection title="Photos">
+          <PhotoLinks title="Skin photos" photos={form.skinPhotos} />
+          <PhotoLinks title="Product photos" photos={form.productPhotos} />
         </FormSection>
       ) : null}
     </div>

@@ -34,6 +34,9 @@ export async function POST(req: Request) {
     const isMelasmaForm =
       data.formType === "melasma";
 
+    const isGeneralForm =
+      data.formType === "general";
+
     /*
      * Validation for the Melasma questionnaire.
      */
@@ -50,6 +53,13 @@ export async function POST(req: Request) {
           {
             status: 400,
           }
+        );
+      }
+      } else if (isGeneralForm) {
+      if (!data.fullName || !data.generalAssessment) {
+        return NextResponse.json(
+          { message: "Required assessment fields are missing." },
+          { status: 400 }
         );
       }
     } else {
@@ -175,13 +185,17 @@ export async function POST(req: Request) {
        */
       formType: isMelasmaForm
         ? "melasma"
-        : "standard",
-
+        : isGeneralForm
+          ? "general"
+          : "standard",
       melasmaAssessment: isMelasmaForm
         ? data.melasmaAssessment
         : null,
-    });
 
+      generalAssessment: isGeneralForm
+        ? data.generalAssessment
+        : null,
+    });
     /*
      * Keep customer's primary skin concern updated.
      */
